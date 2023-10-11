@@ -1,37 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<main class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <h1 class="text-center display-3 py-5">{{title}}</h1>
-            <ul class="list-group">
-                {% for task in tasks %}
-                <li class="list-group-item">
-                    <a href="{% url 'task_detail' task.id %}">
-                        <header class="d-flex justify-content-between">
-                            {% if task.is_important %}
-                            <h1 class="fw-bold text-success">
-                                {{task.id}}
-                                {{task.title}}
-                            </h1>
 
-                            {% else %}
-                            <h1 class="fw-bold">{{task.id}}
-                                {{task.title}}
-                            </h1>
-                            {% endif %}
-                            <p>{{task.user.username}}</p>
-                        </header>
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <h1 class="text-center display-3 py-5">{{title}}</h1>
+        <ul class="list-group">
+            {% for task in tasks %}
+            <li class="list-group-item">
+                <a href="{% url 'task_detail' task.id %}">
+                    <header class="d-flex justify-content-between">
+                        {% if task.is_important %}
+                        <h1 class="fw-bold text-success">
+                            {{task.id}}
+                            {{task.title}}
+                        </h1>
 
-                        <p>{{task.description}}</p>
+                        {% else %}
+                        <h1 class="fw-bold">{{task.id}}
+                            {{task.title}}
+                        </h1>
+                        {% endif %}
+                        <p>{{task.user.username}}</p>
+                    </header>
 
-                        <p>{{task.date_completed|date:'M j Y:i'}}</p>
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
+                    <p>{{task.description}}</p>
+
+                    <p>{{task.date_completed|date:'M j Y:i'}}</p>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
-</main>
+</div>
 {% endblock %}
