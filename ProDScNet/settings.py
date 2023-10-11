@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-import os.path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'InstalledApps.authentication',
+    'InstalledApps.general',
     'InstalledApps.tasks',
     'InstalledApps.bookshop',
 ]
@@ -80,8 +81,12 @@ WSGI_APPLICATION = 'ProDScNet.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE':'django.db.backends.mysql',
+        'NAME':'prodscn1_ProDScNet',
+        'USER':'prodscn1_prodsc1',
+        'PASSWORD':'Quy3I[sN2Z;8j3',
+        'HOST':'prodsc.net',
+        'PORT':'3306',
     }
 }
 
@@ -121,6 +126,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Add images navigation
+MEDIA_ROOT = os.path.join(BASE_DIR, '')
+MEDIA_URL = '/images/'
 
 LOGIN_URL = '/signin'
 

@@ -8,7 +8,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a href="/" class="nav-link">Home</a>
+                    <a href="{% url 'home'%}" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'index'%}" class="nav-link">Index</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'about_us'%}" class="nav-link">About us</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
@@ -18,7 +24,10 @@
                     <a href="{% url 'tasks_completed'%}" class="nav-link">Tasks completed</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/tasks/create" class="nav-link">Task create</a>
+                    <a href="{% url 'bookshop_index'%}" class="nav-link">Bookshop explanation</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'bookshop'%}" class="nav-link">Bookshop</a>
                 </li>
                 <li class="nav-item">
                     <a href="/logout" class="nav-link">Logout</a>

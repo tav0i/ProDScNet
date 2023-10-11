@@ -1,36 +1,44 @@
 {% extends 'base.html' %}
 
+{% block title %}
+{{title}}
+{% endblock %}
+
 {% block content %}
+<div class="card">
+    <div class="card-header">
+        <a name="" id="" class="btn btn-success" href="{% url 'task_create' %}" role="button">Create task</a>
+    </div>
+    <div class="card-body">
+        <div class="col-md-6 offset-md-3">
+            <h1 class="text-center display-3 py-5">{{title}}</h1>
+            <ul class="list-group">
+                {% for task in tasks %}
+                <li class="list-group-item">
+                    <a href="{% url 'task_detail' task.id %}">
+                        <header class="d-flex justify-content-between">
+                            {% if task.is_important %}
+                            <h1 class="fw-bold text-success">
+                                {{task.id}}
+                                {{task.title}}
+                            </h1>
 
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <h1 class="text-center display-3 py-5">{{title}}</h1>
-        <ul class="list-group">
-            {% for task in tasks %}
-            <li class="list-group-item">
-                <a href="{% url 'task_detail' task.id %}">
-                    <header class="d-flex justify-content-between">
-                        {% if task.is_important %}
-                        <h1 class="fw-bold text-success">
-                            {{task.id}}
-                            {{task.title}}
-                        </h1>
+                            {% else %}
+                            <h1 class="fw-bold">{{task.id}}
+                                {{task.title}}
+                            </h1>
+                            {% endif %}
+                            <p>{{task.user.username}}</p>
+                        </header>
 
-                        {% else %}
-                        <h1 class="fw-bold">{{task.id}}
-                            {{task.title}}
-                        </h1>
-                        {% endif %}
-                        <p>{{task.user.username}}</p>
-                    </header>
+                        <p>{{task.description}}</p>
 
-                    <p>{{task.description}}</p>
-
-                    <p>{{task.date_completed|date:'M j Y:i'}}</p>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
+                        <p>{{task.date_completed|date:'M j Y:i'}}</p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
 {% endblock %}
