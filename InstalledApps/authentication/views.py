@@ -8,7 +8,8 @@ from django.db import IntegrityError
 def signup(request):
     if request.method == 'GET':
         return render(request, 'signup.html', {
-            'form': UserCreationForm
+            'form': UserCreationForm,
+            'formaction': '/signup/'
         })
     elif request.method == 'POST':
         if request.POST['password1'] == request.POST['password2']:
@@ -21,15 +22,17 @@ def signup(request):
                         )
                     user.save()
                     login(request, user) #create a cookie with user info
-                    return redirect('tasks')
+                    return redirect('index')
                 except IntegrityError:
                     return render(request, 'signup.html', {
                         'form': UserCreationForm,
+                        'formaction': '/signup/',
                         "errorform": 'Username already exists'
                     })
                 except ValueError:
                     return render(request, 'signup.html', {
                         'form': UserCreationForm,
+                        'formaction': '/signup/',
                         'errorform': 'Invalid data'
                     })
             else:
@@ -40,6 +43,7 @@ def signup(request):
                 errorform += "</ul>"
                 return render(request, 'signup.html', {
                     'form': UserCreationForm,
+                    'formaction': '/signup/',
                     "errorform": errorform
                 })
         else:
@@ -59,7 +63,8 @@ def signout(request):
 def signin(request):
     if request.method == 'GET':
         return render(request, 'signin.html', {
-            'form': AuthenticationForm
+            'form': AuthenticationForm,
+            'formaction': '/signin/'
         })
     elif request.method == 'POST':
         user = authenticate(request, 
@@ -68,9 +73,10 @@ def signin(request):
         if user is None:
             return render(request, 'signin.html', {
                 'form': AuthenticationForm,
+                'formaction': '/signin/',
                 'errorform': 'Username or password is incorrect'
             })
         else:
             login(request, user)
-            return redirect('tasks')
+            return redirect('index')
 

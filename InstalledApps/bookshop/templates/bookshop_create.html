@@ -13,12 +13,9 @@ Book
 {% endblock %}
 
 {% block content %}
-<form action="/bookshop/create/" method="post" enctype="multipart/form-data">
-    {{ errorform | safe }}
-    {% csrf_token %}
-    {% include 'bookshop_form.html' %}
-    <button name="" id="" class="btn btn-primary">
-        Save
-    </button>
-</form>
+{{ errorform | safe }}
+{% include 'bookshop_form.html' %}
+<button name="" id="" class="btn btn-primary">
+    Save
+</button>
 {% endblock %}

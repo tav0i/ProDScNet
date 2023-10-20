@@ -14,6 +14,7 @@ def home(request):
     return render(request, 'home.html')
 
 
+@login_required
 def tasks(request):
     tasks = Task.objects.filter(user=request.user, date_completed__isnull=True)
     return render(request, 'tasks.html', {
@@ -36,7 +37,8 @@ def task_completed(request):
 def task_create(request):
     if request.method == 'GET':
         return render(request, 'task_create.html', {
-            'form': TaskForm
+            'form': TaskForm,
+            'formaction': '/task/create/'
         })
     elif request.method == 'POST':
         form = TaskForm(request.POST)
@@ -49,7 +51,8 @@ def task_create(request):
             except ValueError:
                 return render(request, 'task_create.html', {
                     'form': TaskForm,
-                    'errorform': 'Invalid data'
+                    'errorform': 'Invalid data',
+                    'formaction': '/task/create/'
                 })
         else:
             errorform = "<ul>"
@@ -59,6 +62,7 @@ def task_create(request):
             errorform += "</ul>"
             return render(request, 'task_create.html', {
                 'form': TaskForm,
+                'formaction': '/task/create/',
                 "errorform": errorform
             })
 
@@ -70,7 +74,8 @@ def task_detail(request, task_id):
         form = TaskForm(instance=task)
         return render(request, 'task_detail.html', {
             'task': task,
-            'form': form
+            'form': form,
+            'formaction': f"/task/{task_id}/",
         })
     elif request.method == 'POST':
         task = get_object_or_404(Task, pk=task_id, user=request.user)
@@ -80,12 +85,14 @@ def task_detail(request, task_id):
                 form.save()
                 return render(request, 'task_detail.html', {
                     'task': task,
-                    'form': form
+                    'form': form,
+                    'formaction': f"/task/{task_id}/",
                 })
             except ValueError:
                 return render(request, 'task_detail.html', {
                     'task': task,
                     'form': form,
+                    'formaction': f"/task/{task_id}/",
                     'errorform': "Error updating task"
                 })
         else:
@@ -96,7 +103,8 @@ def task_detail(request, task_id):
             errorform += "</ul>"
             return render(request, 'task_detail.html', {
                 'form': form,
-                "errorform": errorform
+                'formaction': f"/task/'{task_id}/",
+                'errorform': errorform
             })
 
 
@@ -111,9 +119,10 @@ def task_complete(request, task_id):
                 task.save()
                 return redirect('tasks')
             except ValueError:
-                return render(request, 'task_detail.html', {
+                return render(request, 'task.html', {
                     'task': task,
                     'form': form,
+                    'formaction': f"/task/'{task_id}/",
                     'errorform': "Error completing task"
                 })
         else:
@@ -122,15 +131,38 @@ def task_complete(request, task_id):
                 for error in errors:
                     errorform += f"<li>Error in '{field}': {error}</li>"
             errorform += "</ul>"
-            return render(request, 'task_detail.html', {
+            return render(request, 'task.html', {
                 'form': form,
+                'formaction': f"/task/'{task_id}/",
                 "errorform": errorform
             })
 
 
 @login_required
 def task_delete(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
     if request.method == 'POST':
-        task.delete()
-        return redirect('tasks')
+        task = get_object_or_404(Task, pk=task_id, user=request.user)
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            try:
+                task.delete()
+                task.save()
+                return redirect('tasks')
+            except ValueError:
+                return render(request, 'task.html', {
+                    'task': task,
+                    'form': form,
+                    'formaction': f"/task/'{task_id}/",
+                    'errorform': "Error deleting task"
+                })
+        else:
+            errorform = "<ul>"
+            for field, errors in form.errors.items():
+                for error in errors:
+                    errorform += f"<li>Error in '{field}': {error}</li>"
+            errorform += "</ul>"
+            return render(request, 'task.html', {
+                'form': form,
+                'formaction': f"/task/'{task_id}/",
+                "errorform": errorform
+            })

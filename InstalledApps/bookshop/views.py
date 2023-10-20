@@ -24,7 +24,9 @@ def bookshop(request):
 def bookshop_create(request):
     if request.method == 'GET':
         return render(request, 'bookshop_create.html', {
-            'form': BookForm
+            'form': BookForm,
+            'formaction': '/bookshop/create/',
+            'formenctype': 'multipart/form-data',
         })
     elif request.method == 'POST':
         form = BookForm(request.POST, request.FILES or None)
@@ -35,6 +37,8 @@ def bookshop_create(request):
             except ValueError:
                 return render(request, 'bookshop_create.html', {
                     'form': BookForm,
+                    'formaction': '/bookshop/create/',
+                    'formenctype': 'multipart/form-data',
                     'errorform': 'Invalid data'
                 })
         else:
@@ -45,6 +49,8 @@ def bookshop_create(request):
             errorform += "</ul>"
             return render(request, 'bookshop_create.html', {
                 'form': BookForm,
+                'formaction': '/bookshop/create/',
+                'formenctype': 'multipart/form-data',
                 "errorform": errorform
             })
 

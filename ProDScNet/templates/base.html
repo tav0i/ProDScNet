@@ -18,6 +18,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Escuchar el clic en el enlace
+            $(".my_href").on("click", function (e) {
+                e.preventDefault();  // Prevenir el comportamiento predeterminado del enlace
+
+                // Cambiar la acción del formulario
+                $("#my_form").attr("action", $(this).attr("href"));
+
+                // Enviar el formulario
+                $("#my_form").submit();
+            });
+        });
+    </script>
 </head>
 
 <body class="content">
@@ -46,9 +62,12 @@
 
                     {% endblock %}
                 </h4>
-                {% block content %}
+                <form id="my_form" action="{{formaction}}" enctype="{{formenctype}}" method="post">
+                    {% csrf_token %}
+                    {% block content %}
 
-                {% endblock %}
+                    {% endblock %}
+                </form>
             </div>
         </section>
     </main>

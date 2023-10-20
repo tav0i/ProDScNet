@@ -13,22 +13,19 @@ Login
 {% endblock %}
 
 {% block content %}
-<form action="/signin/" method="post">
+<div class="col-md-8 offset-md-2 mt-5 card card-body">
     {{ errorform | safe }}
-    {% csrf_token %}
-    <div class="col-md-8 offset-md-2 mt-5 card card-body">
-        <!-- {{form.as_p}} usa el formulario base de django.admin-->
-        <div class="mb-3">
-            <label for="username">Username:</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Write your username">
-        </div>
-        <div class="mb-3">
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="Write your password">
-        </div>
-        <button class="btn btn-primary">
-            Login
-        </button>
+    <!-- {{form.as_p}} usa el formulario base de django.admin-->
+    <div class="mb-3">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" class="form-control" placeholder="Write your username">
     </div>
-</form>
+    <div class="mb-3">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" class="form-control" placeholder="Write your password">
+    </div>
+    <button class="btn btn-primary">
+        Login
+    </button>
+</div>
 {% endblock %}
