@@ -8,6 +8,10 @@ Bookshop
 Bookshop
 {% endblock %}
 
+{% block cardsubtitle %}
+Book
+{% endblock %}
+
 {% block newbutton %}
 <a name="" id="" class="btn btn-success" href="{% url 'bookshop_create' %}" role="button">
     Add new book
@@ -15,9 +19,6 @@ Bookshop
 {% endblock %}
 
 {% block content %}
-<h4 class="card title">
-    Books
-</h4>
 <div class="table-responsive">
     <table class="table table-primary">
         <thead>

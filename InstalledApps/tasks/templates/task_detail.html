@@ -1,34 +1,52 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Escuchar el clic en el enlace
+        $("#my_href").on("click", function (e) {
+            e.preventDefault();  // Prevenir el comportamiento predeterminado del enlace
+
+            // Cambiar la acción del formulario
+            $("#my_form").attr("action", $(this).attr("href"));
+
+            // Enviar el formulario
+            $("#my_form").submit();
+        });
+    });
+</script>
+
 {% extends 'base.html' %}
 
-{% block title %}
+{% block cardtitle %}
 Detail task
 {% endblock %}
 
-{% block content %}
-<div class="col-md-4 offset-md-4">
-    <h1 class="text-secondary">{{task.title}}</h1>
-    {{error}}
-    <form method="post">
-        {% csrf_token %}
-        {{form.as_p}}
-        <button class="btn btn-primary">
-            Update
-        </button>
-    </form>
-    <div class="mt-5 d-flex">
-        <form action="{% url 'task_complete' task.id %}" method="post">
-            {% csrf_token %}
-            <button class="btn btn-secondary">
-                Complete
-            </button>
-        </form>
+{% block cardsubtitle %}
+Task admin
+{% endblock %}
 
-        <form action="{% url 'task_delete' task.id %}" method="post">
-            {% csrf_token %}
-            <button class="btn btn-danger">
-                Delete
+{% block content %}
+<form id="my_form" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <div class="col-md-8 offset-md-2">
+        <a id="my_href" href="{% url 'task_detail' task.id %}">
+            <button class="btn btn-primary">
+                Update
             </button>
-        </form>
+        </a>
+        <div class="mt-5 d-flex">
+            <a id="my_href" href="{% url 'task_complete' task.id %}">
+                <button class="btn btn-secondary">
+                    Complete
+                </button>
+            </a>
+            <a id="my_href" href="{% url 'task_delete' task.id %}">
+                <button class="btn btn-danger">
+                    Delete
+                </button>
+            </a>
+        </div>
     </div>
-</div>
+</form>
 {% endblock%}

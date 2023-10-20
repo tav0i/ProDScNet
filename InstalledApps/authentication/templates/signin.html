@@ -5,15 +5,18 @@ Signin
 {% endblock %}
 
 {% block cardtitle %}
+Signin
+{% endblock %}
+
+{% block cardsubtitle %}
 Login
 {% endblock %}
+
 {% block content %}
-<section class="col-md-4 offset-md-4 mt-5">
-    <form action="/signin/" method="post" class="card card-body">
-        <!--{{form.as_p}}-->
-        <h1 class="text-center">Login</h1>
-        {{error}}
-        {% csrf_token %}
+<form action="/signin/" method="post">
+    {{ errorform | safe }}
+    {% csrf_token %}
+    <div class="col-md-8 offset-md-2 mt-5 card card-body">
         <!-- {{form.as_p}} usa el formulario base de django.admin-->
         <div class="mb-3">
             <label for="username">Username:</label>
@@ -26,7 +29,6 @@ Login
         <button class="btn btn-primary">
             Login
         </button>
-    </form>
-</section>
-
+    </div>
+</form>
 {% endblock %}

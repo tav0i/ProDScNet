@@ -10,25 +10,42 @@ def signup(request):
         return render(request, 'signup.html', {
             'form': UserCreationForm
         })
-    else:
+    elif request.method == 'POST':
         if request.POST['password1'] == request.POST['password2']:
-            try:
-                user = User.objects.create_user(
-                    username=request.POST['username'],
-                    password=request.POST['password1']
-                    )
-                user.save()
-                login(request, user) #create a cookie with user info
-                return redirect('tasks')
-            except IntegrityError:
+            form = UserCreationForm(request.POST)
+            if form.is_valid():
+                try:
+                    user = User.objects.create_user(
+                        username=request.POST['username'],
+                        password=request.POST['password1']
+                        )
+                    user.save()
+                    login(request, user) #create a cookie with user info
+                    return redirect('tasks')
+                except IntegrityError:
+                    return render(request, 'signup.html', {
+                        'form': UserCreationForm,
+                        "errorform": 'Username already exists'
+                    })
+                except ValueError:
+                    return render(request, 'signup.html', {
+                        'form': UserCreationForm,
+                        'errorform': 'Invalid data'
+                    })
+            else:
+                errorform = "<ul>"
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        errorform += f"<li>Error in '{field}': {error}</li>"
+                errorform += "</ul>"
                 return render(request, 'signup.html', {
                     'form': UserCreationForm,
-                    "error": 'Username already exists'
+                    "errorform": errorform
                 })
         else:
             return render(request, 'signup.html', {
                     'form': UserCreationForm,
-                    "error": 'Password do not match'
+                    "errorform": 'Password do not match'
                 })
 
 @login_required
@@ -51,7 +68,7 @@ def signin(request):
         if user is None:
             return render(request, 'signin.html', {
                 'form': AuthenticationForm,
-                'error': 'Username or password is incorrect'
+                'errorform': 'Username or password is incorrect'
             })
         else:
             login(request, user)

@@ -36,10 +36,16 @@
                 </h4>
                 {{cardbutton}}
                 {% block newbutton %}
-                
+
                 {% endblock %}
             </div>
             <div class="card-body">
+                <h4 class="card title">
+                    {{cardsubtitle}}
+                    {% block cardsubtitle %}
+
+                    {% endblock %}
+                </h4>
                 {% block content %}
 
                 {% endblock %}

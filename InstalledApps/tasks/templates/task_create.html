@@ -4,16 +4,24 @@
 Create task
 {% endblock %}
 
+{% block cardtitle %}
+Create task
+{% endblock %}
+
+{% block cardsubtitle %}
+New task
+{% endblock %}
+
 {% block content %}
-<div class="col-md-4 offset-md-4 mt-5">
-    <h4>Task create</h4>
-    {{error}}
-    <form action="/task/create/" method="post">
+<form action="/task/create/" method="post">
+    <div class="col-md-4 offset-md-4 mt-5">
+        <h4>Task create</h4>
+        {{ errorform | safe }}
         {% csrf_token %}
         {{form.as_p}}
         <button class="btn btn-primary">
             Save
         </button>
-    </form>
-</div>
+    </div>
+</form>
 {% endblock%}
