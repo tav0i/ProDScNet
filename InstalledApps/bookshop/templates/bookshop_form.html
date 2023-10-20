@@ -1,0 +1,11 @@
+{% for book in books%}
+<div class="mb-3">
+    <label for="{{ book.id }}" class="form-label">{{ book.label }}</label>
+    <input type="{{ book.field.widget.input_type }}" class="form-control" name="{{ book.name }}" id="{{ book.id }}"
+        aria-describedby="helpId" placeholder="{{ book.label }}">
+    <small id="helpId" class="form-text text-muted">Help text</small>
+</div>
+<div class="col-12 help-text">
+    {{ book.errors }}
+</div>
+{% endfor %}

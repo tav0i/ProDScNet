@@ -10,8 +10,7 @@ from .forms import Task
 def home(request):
     title = 'Hola mundo '
     return render(request, 'home.html')
-                  
-@login_required
+    
 def tasks(request):
     tasks = Task.objects.filter(user=request.user, date_completed__isnull=True)
     return render(request, 'tasks.html',{
@@ -20,7 +19,7 @@ def tasks(request):
     })
 
 @login_required
-def tasks_completed(request):
+def task_completed(request):
     tasks = Task.objects.filter(user=request.user, date_completed__isnull=False).order_by('date_completed')
     return render(request, 'tasks.html',{
         'tasks': tasks,

@@ -11,20 +11,17 @@
                     <a href="{% url 'home'%}" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'index'%}" class="nav-link">Index</a>
-                </li>
-                <li class="nav-item">
                     <a href="{% url 'about_us'%}" class="nav-link">About us</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
+                    <a href="{% url 'index'%}" class="nav-link">Index</a>
+                </li>
+                <li class="nav-item">
                     <a href="{% url 'tasks'%}" class="nav-link">Tasks pending</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'tasks_completed'%}" class="nav-link">Tasks completed</a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'bookshop_index'%}" class="nav-link">Bookshop explanation</a>
+                    <a href="{% url 'task_completed'%}" class="nav-link">Tasks completed</a>
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'bookshop'%}" class="nav-link">Bookshop</a>
@@ -33,6 +30,9 @@
                     <a href="/logout" class="nav-link">Logout</a>
                 </li>
                 {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'bookshop_index'%}" class="nav-link">Bookshop</a>
+                </li>
                 <li class="nav-item">
                     <a href="/signup" class="nav-link">Signup</a>
                 </li>

@@ -4,6 +4,20 @@
 Create book
 {% endblock %}
 
+{% block cardtitle %}
+Create book
+{% endblock %}
+
 {% block content %}
-create book form
+<div class="col-md-4 offset-md-4 mt-5">
+    <h4>Book</h4>
+    {{error}}
+    <form action="/bookshop/create/" method="post">
+        {% csrf_token %}
+        {% include 'bookshop_form.html' %}
+        <button name="" id="" class="btn btn-primary">
+            Save
+        </button>
+    </form>
+</div>
 {% endblock %}

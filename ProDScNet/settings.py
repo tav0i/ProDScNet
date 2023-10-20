@@ -129,7 +129,7 @@ STATIC_URL = 'static/'
 
 # Add images navigation
 MEDIA_ROOT = os.path.join(BASE_DIR, '')
-MEDIA_URL = '/images/'
+MEDIA_URL = ''
 
 LOGIN_URL = '/signin'
 

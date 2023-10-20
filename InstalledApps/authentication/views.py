@@ -34,7 +34,10 @@ def signup(request):
 @login_required
 def signout(request):
     logout(request)        
-    return redirect('home')
+    return render(request, 'home.html', {
+        'title': 'Home',
+        'cardtitle': 'Home',
+    })
 
 def signin(request):
     if request.method == 'GET':

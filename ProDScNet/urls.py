@@ -16,16 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from ProDScNet import views
 from InstalledApps.authentication import views
 from InstalledApps.general import views
 from InstalledApps.bookshop import views
 from InstalledApps.tasks import views
 
 urlpatterns = [
-    path('', include('InstalledApps.authentication.urls')),
-    path('', include('InstalledApps.general.urls')),
-    path('', include('InstalledApps.bookshop.urls')),
-    path('', include('InstalledApps.tasks.urls')),
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
+    path('', include('InstalledApps.authentication.urls')),
+    path('', include('InstalledApps.general.urls')),
+    path('', include('InstalledApps.tasks.urls')),
+    path('', include('InstalledApps.bookshop.urls')),
 ]

@@ -2,8 +2,10 @@
 <!doctype html>
 <html lang="en">
 
+
 <head>
     <title>
+        {{title}}
         {% block title %}
 
         {% endblock %}
@@ -20,18 +22,29 @@
 
 <body class="content">
     <header class="container">
-        <div class="row col-12">
-            <!-- Contenido del encabezado común -->
-            {% include 'nav.html' %} <!-- Incluye la plantilla de navegación -->
-
-        </div>
+        <!-- Contenido del encabezado común -->
+        {% include 'nav.html' %} <!-- Incluye la plantilla de navegación -->
     </header>
     <main class="container">
-        <div class="row col-12">
-            {% block content %}
-            
-            {% endblock %}
-        </div>
+        <section class="card my-3">
+            <div class="card-header">
+                <h4 class="card-title">
+                    {{cardtitle}}
+                    {% block cardtitle %}
+
+                    {% endblock %}
+                </h4>
+                {{cardbutton}}
+                {% block newbutton %}
+                
+                {% endblock %}
+            </div>
+            <div class="card-body">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+        </section>
     </main>
     <footer>
         <!-- place footer here -->

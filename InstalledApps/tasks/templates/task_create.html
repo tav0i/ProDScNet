@@ -6,9 +6,9 @@ Create task
 
 {% block content %}
 <div class="col-md-4 offset-md-4 mt-5">
-    <h1>Task create</h1>
+    <h4>Task create</h4>
     {{error}}
-    <form action="/task/create/" method="post" class="card card-body">
+    <form action="/task/create/" method="post">
         {% csrf_token %}
         {{form.as_p}}
         <button class="btn btn-primary">
