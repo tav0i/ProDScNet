@@ -36,15 +36,10 @@ def signup(request):
                         'errorform': 'Invalid data'
                     })
             else:
-                errorform = "<ul>"
-                for field, errors in form.errors.items():
-                    for error in errors:
-                        errorform += f"<li>Error in '{field}': {error}</li>"
-                errorform += "</ul>"
                 return render(request, 'signup.html', {
                     'form': UserCreationForm,
                     'formaction': '/signup/',
-                    "errorform": errorform
+                    "errorform": form.errors.items(),
                 })
         else:
             return render(request, 'signup.html', {

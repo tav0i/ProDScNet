@@ -6,7 +6,7 @@ class BookForm(forms.ModelForm):
         model = Book
         fields = '__all__'
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'required': 'required'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control', 'required': 'required'}),
             'description': forms.Textarea(attrs={'class': 'form-control'})
         }

@@ -23,10 +23,13 @@ def bookshop(request):
 @login_required
 def bookshop_create(request):
     if request.method == 'GET':
-        return render(request, 'bookshop_create.html', {
+        return render(request, 'bookshop_detail.html', {
             'form': BookForm,
             'formaction': '/bookshop/create/',
             'formenctype': 'multipart/form-data',
+            'title': 'Create book',
+            'cardtitle': 'Create book',
+            'cardsubtitle': 'Book',
         })
     elif request.method == 'POST':
         form = BookForm(request.POST, request.FILES or None)
@@ -35,39 +38,42 @@ def bookshop_create(request):
                 form.save()
                 return redirect('bookshop')
             except ValueError:
-                return render(request, 'bookshop_create.html', {
+                return render(request, 'bookshop_detail.html', {
                     'form': BookForm,
                     'formaction': '/bookshop/create/',
                     'formenctype': 'multipart/form-data',
-                    'errorform': 'Invalid data'
+                    'title': 'Create book',
+                    'cardtitle': 'Create book',
+                    'cardsubtitle': 'Book',
+                    'errorform': 'Invalid data',
                 })
         else:
-            errorform = "<ul>"
-            for field, errors in form.errors.items():
-                for error in errors:
-                    errorform += f"<li>Error in '{field}': {error}</li>"
-            errorform += "</ul>"
-            return render(request, 'bookshop_create.html', {
+            return render(request, 'bookshop_detail.html', {
                 'form': BookForm,
                 'formaction': '/bookshop/create/',
                 'formenctype': 'multipart/form-data',
-                "errorform": errorform
+                'title': 'Create book',
+                'cardtitle': 'Create book',
+                'cardsubtitle': 'Book',
+                "errorform": form.errors.items(),
             })
 
 
 @login_required
 def bookshop_detail(request, book_id):
+    book = get_object_or_404(Book, pk=book_id)
     if request.method == 'GET':
-        book = get_object_or_404(Book, pk=book_id)
         form = BookForm(instance=book)
         return render(request, 'bookshop_detail.html', {
             'book': book,
             'form': form,
             'formaction': f"/bookshop/{book_id}/",
             'formenctype': 'multipart/form-data',
+            'title': 'Edit book',
+            'cardtitle': 'Edit book',
+            'cardsubtitle': 'Book',
         })
     elif request.method == 'POST':
-        book = get_object_or_404(Book, pk=book_id)
         form = BookForm(request.POST, request.FILES or None, instance=book)
         if form.is_valid():
             try:
@@ -79,19 +85,20 @@ def bookshop_detail(request, book_id):
                     'form': form,
                     'formaction': f"/bookshop/{book_id}/",
                     'formenctype': 'multipart/form-data',
+                    'title': 'Edit book',
+                    'cardtitle': 'Edit book',
+                    'cardsubtitle': 'Book',
                     'errorform': "Error updating book"
                 })
         else:
-            errorform = "<ul>"
-            for field, errors in form.errors.items():
-                for error in errors:
-                    errorform += f"<li>Error in '{field}': {error}</li>"
-            errorform += "</ul>"
             return render(request, 'bookshop_detail.html', {
                 'form': form,
                 'formaction': f"/bookshop/'{book_id}/",
                 'formenctype': 'multipart/form-data',
-                'errorform': errorform
+                'title': 'Edit book',
+                'cardtitle': 'Edit book',
+                'cardsubtitle': 'Book',
+                'errorform': form.errors.items(),
             })
 
 
