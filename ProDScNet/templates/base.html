@@ -43,32 +43,36 @@
     </header>
     <main class="container">
         <section class="card my-3">
-            <div class="card-header">
-                <h4 class="card-title">
-                    {{cardtitle}}
-                    {% block cardtitle %}
+            <form id="my_form" action="{{formaction}}" enctype="{{formenctype}}" method="post">
+                {% csrf_token %}
+                <div class="card-header">
+                    <h4 class="card-title">
+                        {{cardtitle}}
+                        {% block cardtitle %}
+
+                        {% endblock %}
+                    </h4>
+                    {{cardbutton}}
+                    {% block newbutton %}
 
                     {% endblock %}
-                </h4>
-                {{cardbutton}}
-                {% block newbutton %}
+                </div>
+                <div class="card-body">
+                    <h4 class="card title">
+                        {{cardsubtitle}}
+                        {% block cardsubtitle %}
 
-                {% endblock %}
-            </div>
-            <div class="card-body">
-                <h4 class="card title">
-                    {{cardsubtitle}}
-                    {% block cardsubtitle %}
+                        {% endblock %}
+                    </h4>
 
-                    {% endblock %}
-                </h4>
-                <form id="my_form" action="{{formaction}}" enctype="{{formenctype}}" method="post">
-                    {% csrf_token %}
-                    {% block content %}
+                    <div class="card card-body">
+                        {{ errorform | safe }}
+                        {% block content %}
 
-                    {% endblock %}
-                </form>
-            </div>
+                        {% endblock %}
+                    </div>
+                </div>
+            </form>
         </section>
     </main>
     <footer>

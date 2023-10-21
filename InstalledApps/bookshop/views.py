@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -57,9 +57,52 @@ def bookshop_create(request):
 
 @login_required
 def bookshop_detail(request, book_id):
-    return render(request, 'bookshop_detail.html')
+    if request.method == 'GET':
+        book = get_object_or_404(Book, pk=book_id)
+        form = BookForm(instance=book)
+        return render(request, 'bookshop_detail.html', {
+            'book': book,
+            'form': form,
+            'formaction': f"/bookshop/{book_id}/",
+            'formenctype': 'multipart/form-data',
+        })
+    elif request.method == 'POST':
+        book = get_object_or_404(Book, pk=book_id)
+        form = BookForm(request.POST, request.FILES or None, instance=book)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('bookshop')
+            except ValueError:
+                return render(request, 'bookshop_detail.html', {
+                    'book': book,
+                    'form': form,
+                    'formaction': f"/bookshop/{book_id}/",
+                    'formenctype': 'multipart/form-data',
+                    'errorform': "Error updating book"
+                })
+        else:
+            errorform = "<ul>"
+            for field, errors in form.errors.items():
+                for error in errors:
+                    errorform += f"<li>Error in '{field}': {error}</li>"
+            errorform += "</ul>"
+            return render(request, 'bookshop_detail.html', {
+                'form': form,
+                'formaction': f"/bookshop/'{book_id}/",
+                'formenctype': 'multipart/form-data',
+                'errorform': errorform
+            })
 
 
 @login_required
 def bookshop_delete(request, book_id):
-    return redirect('bookshop')
+    if request.method == 'POST':
+        book = get_object_or_404(Book, pk=book_id)
+        try:
+            book.delete()
+            return redirect('bookshop')
+        except ValueError:
+            return render(request, 'bookshop.html', {
+                'errorform': "Error deleting book"
+            })

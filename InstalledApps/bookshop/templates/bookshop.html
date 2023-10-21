@@ -19,34 +19,43 @@ Book
 {% endblock %}
 
 {% block content %}
-<div class="table-responsive">
-    <table class="table table-primary">
-        <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Title</th>
-                <th scope="col">Image</th>
-                <th scope="col">Description</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for book in books %}
-            <tr class="">
-                <td scope="row">{{ book.id }}</td>
-                <td>{{ book.title }}</td>
-                <td>
-                    <img src="{{ book.image.url }}" height="100">
-                </td>
-                <td>{{ book.description }}</td>
-                <td>
-                    <a name="" id="" class="btn btn-info" href="#" role="button">Editar</a>
-                    |
-                    <a name="" id="" class="btn btn-danger" href="#" role="button">Borrar</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="col-md-12 offset-md-0 mt-4">
+    <div class="table-responsive">
+        <table class="table table-primary">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr class="">
+                    <td scope="row">{{ book.id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>
+                        <img src="{{ book.image.url }}" height="100">
+                    </td>
+                    <td>{{ book.description }}</td>
+                    <td>
+                        <a name="" id="" class="btn btn-secondary" href="{% url 'bookshop_detail' book.id %}"
+                            role="button">
+                            Editar
+                        </a>
+                        |
+                        <a class="my_href" href="{% url 'bookshop_delete' book.id %}" role="button">
+                            <button class="btn btn-danger">
+                                Delete
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

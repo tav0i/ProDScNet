@@ -19,28 +19,29 @@ Task
 {% endblock %}
 
 {% block content %}
-<ul class="list-group">
-    {% for task in tasks %}
-    <li class="list-group-item">
-        <a href="{% url 'task_detail' task.id %}">
-            <header class="d-flex justify-content-between">
-                {% if task.is_important %}
-                <h2 class="fw-bold text-success">
-                    {{task.id}}
-                    {{task.title}}
-                </h2>
-                {% else %}
-                <h2 class="fw-bold">{{task.id}}
-                    {{task.title}}
-                </h2>
-                {% endif %}
-                <p>{{task.user.username}}</p>
-            </header>
-            <p>{{task.description}}</p>
-            <p>{{task.date_completed|date:'M j Y:i'}}</p>
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-
+<div class="col-md-12 offset-md-0 mt-4">
+    <ul class="list-group">
+        {% for task in tasks %}
+        <li class="list-group-item">
+            <a href="{% url 'task_detail' task.id %}">
+                <header class="d-flex justify-content-between">
+                    {% if task.is_important %}
+                    <h2 class="fw-bold text-success">
+                        {{task.id}}
+                        {{task.title}}
+                    </h2>
+                    {% else %}
+                    <h2 class="fw-bold">{{task.id}}
+                        {{task.title}}
+                    </h2>
+                    {% endif %}
+                    <p>{{task.user.username}}</p>
+                </header>
+                <p>{{task.description}}</p>
+                <p>{{task.date_completed|date:'M j Y:i'}}</p>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

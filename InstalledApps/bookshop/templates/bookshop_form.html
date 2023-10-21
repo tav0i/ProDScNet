@@ -5,16 +5,38 @@
     class="form-label">
     {{ reg.label }}
 </label>
+{% if reg.field.widget.input_type %}
+    {% if reg.field.widget.input_type == 'file' and reg.value %}
+    <br/>
+    <img src="{{MEDIA_URL}}/{{reg.value}}" width="100">
+    <br/>
+    {% endif %}
 <input 
     type="{{ reg.field.widget.input_type }}" 
-    class="form-control" 
+    class="{{ reg.field.widget.attrs.class }}"
     name="{{ reg.name }}" 
     id="{{ reg.id }}"
     aria-describedby="helpId" 
-    placeholder="{{ reg.label }}">
+    placeholder="{{ reg.label }}"
+    value="{{reg.value | default:'' }}"
+    />
+{% else %}
+<textarea
+    class="{{ reg.field.widget.attrs.class }}"
+    name="{{ reg.name }}" 
+    id="{{ reg.id }}"
+    aria-describedby="helpId" 
+    placeholder="{{ reg.label }}"
+    />
+    {{reg.value | default:'' }}
+</textarea>
+{% endif %}
 <small id="helpId" class="form-text text-muted">Help text</small>
-
 <div class="col-12 help-text">
     {{ reg.errors }}
 </div>
 {% endfor %}
+<button name="" id="" class="btn btn-success">
+    Save
+</button>
+<a name="" id="" class="btn btn-primary" href="{% url 'bookshop' %}" role="button">Cancel</a>

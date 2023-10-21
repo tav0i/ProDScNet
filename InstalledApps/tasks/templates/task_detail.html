@@ -9,23 +9,25 @@ Task admin
 {% endblock %}
 
 {% block content %}
-<div class="col-md-8 offset-md-2 mt-5">
-    {{ errorform | safe }}
+<div class="col-md-8 offset-md-2 mt-4">
     {{form.as_p}}
-    <button class="btn btn-primary">
+    <button class="btn btn-success">
         Update
     </button>
     <div class="mt-5 d-flex">
-        <a class="my_href" href="{% url 'task_complete' task.id %}">
+        <a class="my_href" href="{% url 'task_complete' task.id %}" role="button">
             <button class="btn btn-secondary">
                 Complete
             </button>
         </a>
-        <a class="my_href" href="{% url 'task_delete' task.id %}">
+        |
+        <a class="my_href" href="{% url 'task_delete' task.id %}" role="button">
             <button class="btn btn-danger">
                 Delete
             </button>
         </a>
+        |
+        <a name="" id="" class="btn btn-primary" href="{% url 'tasks' %}" role="button">Cancel</a>
     </div>
 </div>
 {% endblock%}

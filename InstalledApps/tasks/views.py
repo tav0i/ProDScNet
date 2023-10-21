@@ -146,7 +146,6 @@ def task_delete(request, task_id):
         if form.is_valid():
             try:
                 task.delete()
-                task.save()
                 return redirect('tasks')
             except ValueError:
                 return render(request, 'task.html', {
