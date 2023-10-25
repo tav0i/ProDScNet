@@ -27,7 +27,10 @@ SECRET_KEY = 'django-insecure-3v5@tdhbr7ux%hca+6k#5c^d^2()nt)@30*o*c9=7otlo_h)v_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    '0.0.0.0'
+]
 
 
 # Application definition
@@ -79,17 +82,23 @@ WSGI_APPLICATION = 'ProDScNet.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE':'django.db.backends.mysql',
+#         'NAME':'prodscn1_ProDScNet',
+#         'USER':'prodscn1_prodsc1',
+#         'PASSWORD':'Quy3I[sN2Z;8j3',
+#         'HOST':'prodsc.net',
+#         'PORT':'3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE':'django.db.backends.mysql',
-        'NAME':'prodscn1_ProDScNet',
-        'USER':'prodscn1_prodsc1',
-        'PASSWORD':'Quy3I[sN2Z;8j3',
-        'HOST':'prodsc.net',
-        'PORT':'3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
