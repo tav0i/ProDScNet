@@ -1,3 +1,4 @@
+{% load static %}
 {% for reg in form %}
 
 <label 
@@ -8,7 +9,7 @@
 {% if reg.field.widget.input_type %}
     {% if reg.field.widget.input_type == 'file' and reg.value %}
     <br/>
-    <img src="{{MEDIA_URL}}/{{reg.value}}" width="100">
+    <img src="{{MEDIA_URL}}{{reg.value}}" width="100">
     <br/>
     {% endif %}
 <input 

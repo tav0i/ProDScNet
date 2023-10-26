@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def index(request):
     content = 'Welcome to index page'
-    return render(request, 'index.html', {
+    return render(request, 'pages/index.html', {
         'content': content,
     })
 

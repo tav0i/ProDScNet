@@ -8,3 +8,8 @@ db.sqlite3
 #keys and commands
 mykey.pem
 mykey.pem.pub
+
+#imgs static generates
+/static/
+/staticfiles/
+/media/

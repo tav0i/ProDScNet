@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.staticfiles.urls import static
 
 urlpatterns = [
-    path('pages/', views.bookshop_index, name='bookshop_index'),
     path('bookshop/', views.bookshop, name='bookshop'),
     path('bookshop/<int:book_id>/', views.bookshop_detail, name='bookshop_detail'),
     path('bookshop/<int:book_id>/delete', views.bookshop_delete, name='bookshop_delete'),

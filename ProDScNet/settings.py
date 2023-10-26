@@ -28,6 +28,7 @@ SECRET_KEY = 'django-insecure-3v5@tdhbr7ux%hca+6k#5c^d^2()nt)@30*o*c9=7otlo_h)v_
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'prodsc.com',
     '127.0.0.1',
     '0.0.0.0'
 ]
@@ -133,12 +134,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'ProDScNet/static'),
+    os.path.join(BASE_DIR, 'staticfiles'),
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
 
 # Add images navigation
-MEDIA_ROOT = os.path.join(BASE_DIR, '')
-MEDIA_URL = ''
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 LOGIN_URL = '/signin'
 

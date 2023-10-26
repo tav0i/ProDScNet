@@ -1,0 +1,52 @@
+#install python
+sudo apt install python3-pip
+sudo pip3 install supervisor
+sudo apt install python3-venv
+python3 -m venv venv
+source venv/bin/activate
+
+# tu upload the project
+pip freeze > requirements.txt
+pip install requirements.txt
+sudo cp supervidord.con /etc
+sudo supervisorctl
+curl http://localhost:8000
+
+#copia todos los archivos media en una carpeta específica
+python manage.py collectstatic
+
+# change the nginx start page
+sudo nginx -t 
+cd /opt/bitnami/nginx/conf/nginx.conf #review conf of http server
+sudo vi /opt/bitnami/nginx/conf/server_block/default-https-server.conf
+# delete include y location@ proxy_to_app and change with gunicorn config
+location @proxy_to_app {
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header Host $http_host;
+      # we don't want nginx trying to do something clever with
+      # redirects, we set the Host: header above already.
+      proxy_redirect off;
+      proxy_pass http://localhost:8000;
+    }
+
+#see bitnami services
+sudo /opt/bitnami/ctlscript.sh status
+
+#phpMyAdmin connect
+ssh -N -L 8888:127.0.0.1:80 -i mykey.pem tav0i@34.147.90.31
+#create superuser in django project
+python manage.py createsuperuser
+
+#connect to console of google cloud
+ssh -i mykey.pem tav0i@34.147.90.31
+
+
+con el >> mariadb --help --verbose se pone bind-address=0.0.0.0 #acepta conecciones remotas
+
+#usar gunicorn con supervisor
+sudo supervisorctl help
+sudo supervisorctl status
+
+
+

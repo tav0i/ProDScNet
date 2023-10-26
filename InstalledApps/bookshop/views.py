@@ -2,16 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.conf import settings
 from .models import Book
 from .forms import BookForm
 
 # Create your views here.
-
-
-def bookshop_index(request):
-    return render(request, 'pages/index.html')
-
-
 @login_required
 def bookshop(request):
     books = Book.objects.all()
@@ -27,6 +22,7 @@ def bookshop_create(request):
             'form': BookForm,
             'formaction': '/bookshop/create/',
             'formenctype': 'multipart/form-data',
+            'MEDIA_URL': settings.MEDIA_URL,
             'title': 'Create book',
             'cardtitle': 'Create book',
             'cardsubtitle': 'Book',
@@ -42,6 +38,7 @@ def bookshop_create(request):
                     'form': BookForm,
                     'formaction': '/bookshop/create/',
                     'formenctype': 'multipart/form-data',
+                    'MEDIA_URL': settings.MEDIA_URL,
                     'title': 'Create book',
                     'cardtitle': 'Create book',
                     'cardsubtitle': 'Book',
@@ -52,6 +49,7 @@ def bookshop_create(request):
                 'form': BookForm,
                 'formaction': '/bookshop/create/',
                 'formenctype': 'multipart/form-data',
+                'MEDIA_URL': settings.MEDIA_URL,
                 'title': 'Create book',
                 'cardtitle': 'Create book',
                 'cardsubtitle': 'Book',
@@ -69,6 +67,7 @@ def bookshop_detail(request, book_id):
             'form': form,
             'formaction': f"/bookshop/{book_id}/",
             'formenctype': 'multipart/form-data',
+            'MEDIA_URL': settings.MEDIA_URL,
             'title': 'Edit book',
             'cardtitle': 'Edit book',
             'cardsubtitle': 'Book',
@@ -85,6 +84,7 @@ def bookshop_detail(request, book_id):
                     'form': form,
                     'formaction': f"/bookshop/{book_id}/",
                     'formenctype': 'multipart/form-data',
+                    'MEDIA_URL': settings.MEDIA_URL,
                     'title': 'Edit book',
                     'cardtitle': 'Edit book',
                     'cardsubtitle': 'Book',
@@ -95,6 +95,7 @@ def bookshop_detail(request, book_id):
                 'form': form,
                 'formaction': f"/bookshop/'{book_id}/",
                 'formenctype': 'multipart/form-data',
+                'MEDIA_URL': settings.MEDIA_URL,
                 'title': 'Edit book',
                 'cardtitle': 'Edit book',
                 'cardsubtitle': 'Book',

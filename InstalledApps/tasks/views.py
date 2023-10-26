@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.utils import timezone
+from django.conf import settings
 from .forms import TaskForm
 from .forms import Task
 
@@ -10,8 +11,14 @@ from .forms import Task
 
 
 def home(request):
-    title = 'Hola mundo '
-    return render(request, 'home.html')
+    gretting = 'Saludos desde el programa de django'
+    return render(request, 'home.html', {
+        'gretting':gretting,
+        'STATIC_URL_': settings.STATIC_URL,
+        'MEDIA_ROOT_': settings.MEDIA_ROOT,
+        'MEDIA_URL_': settings.MEDIA_URL,
+        'BASE_DIR_': settings.BASE_DIR,
+    })
 
 
 @login_required
