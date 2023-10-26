@@ -82,23 +82,23 @@ WSGI_APPLICATION = 'ProDScNet.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE':'django.db.backends.mysql',
-#         'NAME':'prodscn1_ProDScNet',
-#         'USER':'prodscn1_prodsc1',
-#         'PASSWORD':'Quy3I[sN2Z;8j3',
-#         'HOST':'prodsc.net',
-#         'PORT':'3306',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'prodscn1_ProDScNet',
+        'USER': 'tav0i',
+        'PASSWORD': 'Win6427Univ2',
+        'HOST': '34.147.90.31',
+        'PORT': '3306',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

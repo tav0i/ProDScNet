@@ -1,0 +1,16 @@
+#install python
+sudo apt install python3-pip
+sudo pip3 install supervisor
+
+#phpMyAdmin connect
+ssh -N -L 8888:127.0.0.1:80 -i mykey.pem tav0i@34.147.90.31
+
+#connect to console of google cloud
+ssh -i mykey.pem tav0i@34.147.90.31
+
+
+con el >> mariadb --help --verbose se pone bind-address=0.0.0.0 #acepta conecciones remotas
+
+#usar gunicorn con supervisor
+sudo supervisorctl help
+sudo supervisorctl status
