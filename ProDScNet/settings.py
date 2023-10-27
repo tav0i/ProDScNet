@@ -29,6 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'prodsc.com',
+    'www.prodsc.com',
     '127.0.0.1',
     '0.0.0.0'
 ]

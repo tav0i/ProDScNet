@@ -15,7 +15,9 @@
 <input 
     type="{{ reg.field.widget.input_type }}" 
     class="{{ reg.field.widget.attrs.class }}"
-    required="{{ reg.field.widget.attrs.required }}"
+    {% if reg.field.widget.attrs.required %}
+        required="{{ reg.field.widget.attrs.required }}"
+    {% endif %}
     name="{{ reg.name }}" 
     id="{{ reg.id }}"
     aria-describedby="helpId" 

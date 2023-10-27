@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.conf import settings
+from django.urls import reverse
 from .models import Book
 from .forms import BookForm
 
@@ -35,7 +36,7 @@ def bookshop_create(request):
         if form.is_valid():
             try:
                 form.save()
-                return redirect('bookshop')
+                return redirect(reverse('bookshop'))
             except ValueError:
                 context.update({'errorform': {'errorset': 'Invalid data'}})
                 return render(request, 'bookshop_detail.html', context)
@@ -48,8 +49,7 @@ def bookshop_create(request):
 def bookshop_detail(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     context = {
-        'form': form,
-        'formaction': f"/bookshop/'{book_id}/",
+        'formaction': f"/bookshop/{book_id}/",
         'formenctype': 'multipart/form-data',
         'MEDIA_URL': settings.MEDIA_URL,
         'title': 'Edit book',
@@ -58,14 +58,18 @@ def bookshop_detail(request, book_id):
     }
     if request.method == 'GET':
         form = BookForm(instance=book)
-        context.update({'book': book,}) 
+        context.update({
+            'form': form,
+            'book': book,
+            }) 
         return render(request, 'bookshop_detail.html', context)
     elif request.method == 'POST':
         form = BookForm(request.POST, request.FILES or None, instance=book)
+        context.update({'form': form})
         if form.is_valid():
             try:
                 form.save()
-                return redirect('bookshop')
+                return redirect(reverse('bookshop'))
             except ValueError:
                 context.update({
                     'book': book,
@@ -82,7 +86,7 @@ def bookshop_delete(request, book_id):
         book = get_object_or_404(Book, pk=book_id)
         try:
             book.delete()
-            return redirect('bookshop')
+            return redirect(reverse('bookshop'))
         except ValueError:
             return render(request, 'bookshop.html', {
                 'errorform': {'errorset': 'Error deleting book'}

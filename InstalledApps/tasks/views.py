@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.utils import timezone
 from django.conf import settings
+from django.urls import reverse
 from .forms import TaskForm
 from .forms import Task
 
@@ -36,11 +37,15 @@ def tasks(request, is_not_completed):
         'tasks': tasks,
     }
     if is_not_completed:
-        context.update({'title': 'Pending Task'})
-        context.update({'formaction': '/task/True'})
+        context.update({
+            'title': 'Pending Task',
+            'formaction': '/task/True'
+            })
     else:
-        context.update({'title': 'Completed Task'})
-        context.update({'formaction': '/task/False'})
+        context.update({
+            'title': 'Completed Task',
+            'formaction': '/task/False'
+            })
 
     return render(request, 'tasks.html', context)
 
@@ -60,7 +65,7 @@ def task_create(request):
                 user_task = form.save(commit=False)
                 user_task.user = request.user
                 user_task.save()
-                return redirect('tasks/True')
+                return redirect(reverse('tasks', args=['True']))
             except ValueError:
                 context.update({'errorform': {'errorset': 'Invalid data'}})
                 return render(request, 'task_create.html', context)
@@ -73,15 +78,18 @@ def task_create(request):
 def task_detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user=request.user)
     context = {
-        'form': form,
         'formaction': f"/task/{task_id}/",
     }
     if request.method == 'GET':
         form = TaskForm(instance=task)
-        context.update({'task': task,})
+        context.update({
+            'form': form,
+            'task': task,
+            })
         return render(request, 'task_detail.html', context)
     elif request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
+        context.update({'form': form})
         if form.is_valid():
             try:
                 form.save()
@@ -101,17 +109,17 @@ def task_detail(request, task_id):
 @login_required
 def task_complete(request, task_id):
     context = {
-        'form': form,
-        'formaction': f"/task/'{task_id}/",
+        'formaction': f"/task/{task_id}/",
     }
     if request.method == 'POST':
         task = get_object_or_404(Task, pk=task_id, user=request.user)
         form = TaskForm(request.POST, instance=task)
+        context.update({'form': form})
         if form.is_valid():
             try:
                 task.date_completed = timezone.now()
                 task.save()
-                return redirect('tasks')
+                return redirect(reverse('tasks', args=['True']))
             except ValueError:
                 context.update({
                     'task': task,
@@ -126,16 +134,16 @@ def task_complete(request, task_id):
 @login_required
 def task_delete(request, task_id):
     context = {
-        'form': form,
-        'formaction': f"/task/'{task_id}/",
+        'formaction': f"/task/{task_id}/",
     }
     if request.method == 'POST':
         task = get_object_or_404(Task, pk=task_id, user=request.user)
         form = TaskForm(request.POST, instance=task)
+        context.update({'form': form})
         if form.is_valid():
             try:
                 task.delete()
-                return redirect('tasks/True')
+                return redirect(reverse('tasks', args=['True']))
             except ValueError:
                 context.update({
                     'task': task,

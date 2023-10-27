@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
@@ -24,7 +25,7 @@ def signup(request):
                     )
                     user.save()
                     login(request, user)  # create a cookie with user info
-                    return redirect('index')
+                    return redirect(reverse('index'))
                 except IntegrityError:
                     context.update(
                         {'errorform': {'errorset': 'Username already exists'}})
@@ -68,4 +69,4 @@ def signin(request):
             return render(request, 'signin.html', context)
         else:
             login(request, user)
-            return redirect('index')
+            return redirect(reverse('index'))

@@ -1,25 +1,77 @@
+# tu upload the project
+pip freeze > requirements.txt
+pip install requirements.txt
+sudo supervisorctl
+curl http://localhost:8000
+
+#phpMyAdmin connect
+ssh -N -L 8888:127.0.0.1:80 -i mykey.pem tav0i@34.147.90.31
+con el >> mariadb --help --verbose se pone bind-address=0.0.0.0 #acepta conecciones remotas
+
+#create superuser in django project
+python manage.py createsuperuser
+
+#connect to console of google cloud
+ssh -i mykey.pem tav0i@34.147.90.31
+
 #install python
 sudo apt install python3-pip
 sudo pip3 install supervisor
 sudo apt install python3-venv
 python3 -m venv venv
 source venv/bin/activate
+git clone https://github.com/tav0i/ProDScNet.git
+sudo apt install supervisor
+pip install -r requirements.txt
+#ingresando en la ruta del proyecto 
+gunicorn ProDScNet.wsgi
+#reverse proxy nginx
+sudo nginx -t
 
-# tu upload the project
-pip freeze > requirements.txt
-pip install requirements.txt
-sudo cp supervidord.con /etc
-sudo supervisorctl
-curl http://localhost:8000
+#manage supervisor configuration add gunicorn
+[program:gunicorn]
+command=/home/gustavo_moyano_diaz/venv/bin/gunicorn -w 3 ProDScNet.wsgi
+directory=/home/gustavo_moyano_diaz/ProDScNet/
+user=gustavo_moyano_diaz
 
-#copia todos los archivos media en una carpeta específica
-python manage.py collectstatic
+autostart=true
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/var/log/ProDScNet.log
+stdout_logfile_maxbytes=50MB
+stderr_logfile=/var/log/ProDScNet.err
+stderr_logfile_maxbytes=50MB
+
+# Opciones de configuración adicionales
+
+loglevel=info
+startsecs=10
+startretries=3
+
+# Opciones específicas de Gunicorn
+workers=3
+
+#restart supervisor
+sudo service supervisor restart
+
+#copiamos el archivo de configuración de supervisor
+sudo cp supervisord.conf /etc/supervisor/
+#usar gunicorn con supervisor
+sudo supervisorctl help
+sudo supervisorctl status
+sudo supervisorctl restart gunicorn
 
 # change the nginx start page
 sudo nginx -t 
-cd /opt/bitnami/nginx/conf/nginx.conf #review conf of http server
-sudo vi /opt/bitnami/nginx/conf/server_block/default-https-server.conf
-# delete include y location@ proxy_to_app and change with gunicorn config
+sudo nano /opt/bitnami/nginx/conf/nginx.conf #review conf of http server
+cat /opt/bitnami/nginx/conf/server_blocks/*.conf
+sudo nano /opt/bitnami/nginx/conf/server_blocks/*.conf
+# delete final include y location /status and change with gunicorn config
+location / {
+      # checks for static file, if not found proxy to app
+      try_files $uri @proxy_to_app;
+    }
+
 location @proxy_to_app {
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header X-Forwarded-Proto $scheme;
@@ -30,23 +82,19 @@ location @proxy_to_app {
       proxy_pass http://localhost:8000;
     }
 
-#see bitnami services
+    error_page 500 502 503 504 /500.html;
+    location = /500.html {
+      root /home/gustavo.moyano.diaz/ProDScNet/InstalledApps/general/templates;
+    }
+
+#volver a provar nginx
+sudo nginx -t 
+#see bitnami services y reiniciar 
 sudo /opt/bitnami/ctlscript.sh status
+sudo /opt/bitnami/ctlscript.sh restart nginx
 
-#phpMyAdmin connect
-ssh -N -L 8888:127.0.0.1:80 -i mykey.pem tav0i@34.147.90.31
-#create superuser in django project
-python manage.py createsuperuser
-
-#connect to console of google cloud
-ssh -i mykey.pem tav0i@34.147.90.31
-
-
-con el >> mariadb --help --verbose se pone bind-address=0.0.0.0 #acepta conecciones remotas
-
-#usar gunicorn con supervisor
-sudo supervisorctl help
-sudo supervisorctl status
+#copia todos los archivos media en una carpeta específica
+python manage.py collectstatic
 
 
 
