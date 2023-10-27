@@ -12,13 +12,14 @@ from .forms import Task
 
 def home(request):
     gretting = 'Saludos desde el programa de django'
-    return render(request, 'home.html', {
-        'gretting':gretting,
+    context = {
+        'gretting': gretting,
         'STATIC_URL_': settings.STATIC_URL,
         'MEDIA_ROOT_': settings.MEDIA_ROOT,
         'MEDIA_URL_': settings.MEDIA_URL,
         'BASE_DIR_': settings.BASE_DIR,
-    })
+    }
+    return render(request, 'home.html', context)
 
 
 @login_required
@@ -28,31 +29,30 @@ def tasks(request, is_not_completed):
     else:
         is_not_completed = False
     tasks = Task.objects.filter(
-            user=request.user, 
-            date_completed__isnull=is_not_completed).order_by('date_completed')
-    
+        user=request.user,
+        date_completed__isnull=is_not_completed).order_by('date_completed')
+
     context = {
         'tasks': tasks,
     }
     if is_not_completed:
-        print('pending')
-        context.update({'title':'Pending Task'})
+        context.update({'title': 'Pending Task'})
         context.update({'formaction': '/task/True'})
     else:
-        print('complete')
-        context.update({'title':'Completed Task'})
+        context.update({'title': 'Completed Task'})
         context.update({'formaction': '/task/False'})
-    
+
     return render(request, 'tasks.html', context)
 
 
 @login_required
 def task_create(request):
+    context = {
+        'form': TaskForm,
+        'formaction': '/task/create/'
+    }
     if request.method == 'GET':
-        return render(request, 'task_create.html', {
-            'form': TaskForm,
-            'formaction': '/task/create/'
-        })
+        return render(request, 'task_create.html', context)
     elif request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
@@ -62,56 +62,48 @@ def task_create(request):
                 user_task.save()
                 return redirect('tasks/True')
             except ValueError:
-                return render(request, 'task_create.html', {
-                    'form': TaskForm,
-                    'errorform': 'Invalid data',
-                    'formaction': '/task/create/'
-                })
+                context.update({'errorform': {'errorset': 'Invalid data'}})
+                return render(request, 'task_create.html', context)
         else:
-            return render(request, 'task_create.html', {
-                'form': TaskForm,
-                'formaction': '/task/create/',
-                "errorform": form.errors.items(),
-            })
+            context.update({'errorform': form.errors.items()})
+            return render(request, 'task_create.html', context)
 
 
 @login_required
 def task_detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user=request.user)
+    context = {
+        'form': form,
+        'formaction': f"/task/{task_id}/",
+    }
     if request.method == 'GET':
         form = TaskForm(instance=task)
-        return render(request, 'task_detail.html', {
-            'task': task,
-            'form': form,
-            'formaction': f"/task/{task_id}/",
-        })
+        context.update({'task': task,})
+        return render(request, 'task_detail.html', context)
     elif request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
             try:
                 form.save()
-                return render(request, 'task_detail.html', {
-                    'task': task,
-                    'form': form,
-                    'formaction': f"/task/{task_id}/",
-                })
+                context.update({'task': task,})
+                return render(request, 'task_detail.html', context)
             except ValueError:
-                return render(request, 'task_detail.html', {
+                context.update({
                     'task': task,
-                    'form': form,
-                    'formaction': f"/task/{task_id}/",
-                    'errorform': "Error updating task"
-                })
+                    'errorform': {'errorset': 'Error updating task'}
+                    })
+                return render(request, 'task_detail.html', context)
         else:
-            return render(request, 'task_detail.html', {
-                'form': form,
-                'formaction': f"/task/'{task_id}/",
-                'errorform': form.errors.items(),
-            })
+            context.update({'errorform': form.errors.items()})
+            return render(request, 'task_detail.html', context)
 
 
 @login_required
 def task_complete(request, task_id):
+    context = {
+        'form': form,
+        'formaction': f"/task/'{task_id}/",
+    }
     if request.method == 'POST':
         task = get_object_or_404(Task, pk=task_id, user=request.user)
         form = TaskForm(request.POST, instance=task)
@@ -121,22 +113,22 @@ def task_complete(request, task_id):
                 task.save()
                 return redirect('tasks')
             except ValueError:
-                return render(request, 'task.html', {
+                context.update({
                     'task': task,
-                    'form': form,
-                    'formaction': f"/task/'{task_id}/",
-                    'errorform': "Error completing task"
-                })
+                    'errorform': {'errorset': 'Error completing task'}
+                    })
+                return render(request, 'task.html', context)
         else:
-            return render(request, 'task.html', {
-                'form': form,
-                'formaction': f"/task/'{task_id}/",
-                "errorform": form.errors.items(),
-            })
+            context.update({'errorform': form.errors.items()})
+            return render(request, 'task.html', context)
 
 
 @login_required
 def task_delete(request, task_id):
+    context = {
+        'form': form,
+        'formaction': f"/task/'{task_id}/",
+    }
     if request.method == 'POST':
         task = get_object_or_404(Task, pk=task_id, user=request.user)
         form = TaskForm(request.POST, instance=task)
@@ -145,15 +137,11 @@ def task_delete(request, task_id):
                 task.delete()
                 return redirect('tasks/True')
             except ValueError:
-                return render(request, 'task.html', {
+                context.update({
                     'task': task,
-                    'form': form,
-                    'formaction': f"/task/'{task_id}/",
-                    'errorform': "Error deleting task"
-                })
+                    'errorform': {'errorset': 'Error deleting task'}
+                    })
+                return render(request, 'task.html', context)
         else:
-            return render(request, 'task.html', {
-                'form': form,
-                'formaction': f"/task/'{task_id}/",
-                "errorform": form.errors.items(),
-            })
+            context.update({'errorform': form.errors.items()})
+            return render(request, 'task.html', context)
