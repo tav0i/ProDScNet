@@ -143,7 +143,10 @@ def task_delete(request, task_id):
         if form.is_valid():
             try:
                 task.delete()
-                return redirect(reverse('tasks', args=['True']))
+                if task.date_completed == None:
+                    return redirect(reverse('tasks', args=['True']))
+                else:
+                    return redirect(reverse('tasks', args=['False']))
             except ValueError:
                 context.update({
                     'task': task,

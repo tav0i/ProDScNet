@@ -1,3 +1,9 @@
+# if venv is none
+export PYTHONPATH=$PYTHONPATH:/home/tav0i/MEGA/GIT/ProDSc/venv/bin 
+#extensions for Intellicense from microsoft
+python
+Pylance
+
 # tu upload the project
 pip freeze > requirements.txt
 pip install requirements.txt
@@ -72,6 +78,11 @@ location / {
       try_files $uri @proxy_to_app;
     }
 
+location /static/ {
+      #check for static files, if not found proxy to app
+      root /opt/bitnami/nginx/html/;
+    }
+
 location @proxy_to_app {
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header X-Forwarded-Proto $scheme;
@@ -84,7 +95,7 @@ location @proxy_to_app {
 
     error_page 500 502 503 504 /500.html;
     location = /500.html {
-      root /home/gustavo.moyano.diaz/ProDScNet/InstalledApps/general/templates;
+      root /opt/bitnami/nginx/html/;
     }
 
 #volver a provar nginx
@@ -95,6 +106,9 @@ sudo /opt/bitnami/ctlscript.sh restart nginx
 
 #copia todos los archivos media en una carpeta específica
 python manage.py collectstatic
+#move static and media files to html and give permisions
+sudo mv /static /opt/bitnami/nginx/html/
+sudo chown -R bitnami html
 
 
 

@@ -1,0 +1,20 @@
+{
+    "python.pythonPath": "/home/tav0i/MEGA/GIT/ProDSc/venv/bin/python",
+    "python.autoComplete.addBrackets": true,
+    "python.autoComplete.addArguments": true,
+    "python.autoComplete.showAdvancedMembers": true,
+    "python.linting.pylintArgs": ["--load-plugins", "pylint_django"],
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.formatting.provider": "black",
+    "python.autoComplete.addBrackets": true,
+    "python.autoComplete.addArguments": true,
+    "python.autoComplete.showAdvancedMembers": true,
+    "python.linting.pylintUseMinimalCheckers": false,
+    "python.analysis.typeCheckingMode": "off",
+    "python.autoComplete.addSnippets": true,
+    "python.analysis.extraPaths": [
+        "/home/tav0i/MEGA/GIT/ProDSc/ProDScNet"
+    ],
+    "python.analysis.completeFunctionParens": true,
+}
