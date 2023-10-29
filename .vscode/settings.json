@@ -1,4 +1,7 @@
 {
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
     "python.pythonPath": "/home/tav0i/MEGA/GIT/ProDSc/venv/bin/python",
     "python.autoComplete.addBrackets": true,
     "python.autoComplete.addArguments": true,

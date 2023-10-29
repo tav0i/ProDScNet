@@ -1,7 +1,14 @@
 from django.urls import path
 from InstalledApps.tasks import views
+from InstalledApps.tasks import apis
+
+from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
+    path('api/tasks/<str:is_not_completed>', apis.TaskList.as_view(), name='api_tasks'),
+    path('api/tasks/<int:task_id>/', apis.TaskDetail.as_view(), name='api_task_detail'),
+    path('api/tasks/create/', apis.TaskCreate.as_view(), name='api_task_create'),
+
     path('tasks/<str:is_not_completed>', views.tasks, name='tasks'),
     path('task/create/', views.task_create, name='task_create'),
     path('task/<int:task_id>/', views.task_detail, name='task_detail'),

@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .api import ProjectViewSet
+from .apis import ProjectViewSet
 
 router = routers.DefaultRouter()
 router.register('api/projects', ProjectViewSet, 'projects')

@@ -19,18 +19,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 @permission_classes([IsAuthenticated])  # Requiere autenticación
 @login_required
 def tasks(request, is_not_completed):
+    context = {}
     if is_not_completed == 'True':
-        is_not_completed = True
-    else:
-        is_not_completed = False
-    tasks = Task.objects.filter(
-        user=request.user,
-        date_completed__isnull=is_not_completed).order_by('date_completed')
-
-    context = {
-        'tasks': tasks,
-    }
-    if is_not_completed:
         context.update({
             'title': 'Pending Task',
             'formaction': '/task/True'
@@ -40,7 +30,27 @@ def tasks(request, is_not_completed):
             'title': 'Completed Task',
             'formaction': '/task/False'
             })
-
+    try:
+        rest_url = f'{settings.API_BASE_URL}api/tasks/{is_not_completed}'
+        access_token = request.session.get('access_token')
+        headers = {'Authorization': {access_token}}
+        response = requests.get(rest_url, headers)
+        print(f'se ejecuta la consulta {response}')
+        print(context)
+        if response.status_code == 200:
+            rest_data = response.json()
+            tasks = TaskSerializer(data=rest_data, many=True)
+            print(tasks)
+            if serializer.is_valid():
+                tasks = serializer.save()
+        context.update({
+            'tasks': tasks, 
+        })
+    except Exception as e:
+        context.update({
+            'errorform': {'errorset': e}
+            })
+        return render(request, 'tasks.html', context)
     return render(request, 'tasks.html', context)
 
 
@@ -56,10 +66,21 @@ def task_create(request):
         form = TaskForm(request.POST)
         if form.is_valid():
             try:
-                user_task = form.save(commit=False)
-                user_task.user = request.user
-                user_task.save()
-                return redirect(reverse('tasks', args=['True']))
+                data = form.cleaned_data
+                response = requests.post('api/task/create', data=data)
+                
+                #user_task = form.save(commit=False)
+                #user_task.user = request.user
+                #user_task.save()
+
+                if response.status_code == 201:
+                    return redirect(reverse('tasks', args=['True']))
+                else:
+                    context.update({'errorform': {'errorset': 'Create API Fail'}})
+                    return render(request, 'task_create.html', context)
+            except requests.exceptions.RequestException as e:
+                context.update({'errorform': {'errorset': e}})
+                return render(request, 'task_create.html', context)
             except ValueError:
                 context.update({'errorform': {'errorset': 'Invalid data'}})
                 return render(request, 'task_create.html', context)

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,6 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-3v5@tdhbr7ux%hca+6k#5c^d^2()nt)@30*o*c9=7otlo_h)v_'
+
+# BASE URL APIS
+API_BASE_URL = "http://127.0.0.1:8000/"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -45,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'InstalledApps.authentication',
     'InstalledApps.general',
     'InstalledApps.tasks',
@@ -122,6 +127,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_PREFIX': 'Bearer',
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': 'my_secret_key',
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Tiempo de vida del token de acceso
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),  # Tiempo de vida de actualización del token deslizante
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),  # Tiempo de vida del token deslizante
+    'SLIDING_TOKEN_LIFETIME_REFRESH': timedelta(days=7),  # Tiempo de vida del token deslizante refrescado
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -154,3 +175,22 @@ LOGIN_URL = '/signin'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'level': 'DEBUG',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }
+

@@ -23,10 +23,25 @@ from InstalledApps.general import views
 from InstalledApps.bookshop import views
 from InstalledApps.tasks import views
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
+from . import views
+
 urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/img/favicon.png')),
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+
+    # Otras rutas protegidas por JWT
+    #path('api/secure-resource/', views.SecureResourceView.as_view(), name='secure_resource'),
+
     path('', include('InstalledApps.authentication.urls')),
     path('', include('InstalledApps.general.urls')),
     path('', include('InstalledApps.tasks.urls')),
