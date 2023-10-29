@@ -8,6 +8,7 @@ from django.urls import reverse
 from .forms import TaskForm
 from .forms import Task
 
+import json
 import requests
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -19,28 +20,26 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 @permission_classes([IsAuthenticated])  # Requiere autenticación
 @login_required
 def tasks(request, is_not_completed):
-    if is_not_completed == 'True':
-        is_not_completed = True
-    else:
+    context = {}
+    if is_not_completed == 'False':
         is_not_completed = False
-    tasks = Task.objects.filter(
-        user=request.user,
-        date_completed__isnull=is_not_completed).order_by('date_completed')
-
-    context = {
-        'tasks': tasks,
-    }
-    if is_not_completed:
-        context.update({
-            'title': 'Pending Task',
-            'formaction': '/task/True'
-            })
-    else:
         context.update({
             'title': 'Completed Task',
             'formaction': '/task/False'
             })
-
+    else:
+        is_not_completed = True
+        context.update({
+            'title': 'Pending Task',
+            'formaction': '/task/True'
+            })
+    tasks = Task.objects.filter(
+        user=request.user,
+        date_completed__isnull=is_not_completed).order_by('date_completed')
+    context.update({
+        'tasks': tasks,
+    })
+    
     return render(request, 'tasks.html', context)
 
 

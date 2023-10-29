@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
+from InstalledApps.general.constants import Constants
 
 def home(request):
     gretting = 'Saludos desde el programa de django'
@@ -9,6 +10,6 @@ def home(request):
         'MEDIA_ROOT_': settings.MEDIA_ROOT,
         'MEDIA_URL_': settings.MEDIA_URL,
         'BASE_DIR_': settings.BASE_DIR,
-        'ACCESS_TOKEN' : request.session.get('access_token')
+        'ACCESS_TOKEN_' : request.session.get(Constants.ACCESS_TOKEN)
     }
     return render(request, 'home.html', context)

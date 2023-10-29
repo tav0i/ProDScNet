@@ -7,6 +7,7 @@ from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from datetime import timedelta
+from InstalledApps.general.constants import Constants
 
 import requests
 import json 
@@ -76,7 +77,7 @@ def signin(request):
         else:
             login(request, user)
             refresh = refresh_token(user, is_local=True)
-            request.session['access_token'] = f'Bearer {refresh.access_token}'
+            request.session[Constants.ACCESS_TOKEN] = f'Bearer {refresh.access_token}'
             return redirect(reverse('index'))
 
 # tokens manager, external calls in development

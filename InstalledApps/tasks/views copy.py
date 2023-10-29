@@ -13,6 +13,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenVerifyView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from InstalledApps.general.constants import Constants
 
 # REST tasks
 @authentication_classes([JWTAuthentication])  # Utiliza JWTAuthentication para autenticación
@@ -32,7 +33,7 @@ def tasks(request, is_not_completed):
             })
     try:
         rest_url = f'{settings.API_BASE_URL}api/tasks/{is_not_completed}'
-        access_token = request.session.get('access_token')
+        access_token = request.session.get(Constants.ACCESS_TOKEN)
         headers = {'Authorization': {access_token}}
         response = requests.get(rest_url, headers)
         print(f'se ejecuta la consulta {response}')
