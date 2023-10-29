@@ -10,14 +10,12 @@ from .forms import Task
 
 import json
 import requests
-from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.views import TokenVerifyView
-from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 # REST tasks
-@authentication_classes([JWTAuthentication])  # Utiliza JWTAuthentication para autenticación
-@permission_classes([IsAuthenticated])  # Requiere autenticación
+@permission_classes([IsAuthenticated])  
 @login_required
 def tasks(request, is_not_completed):
     context = {}
