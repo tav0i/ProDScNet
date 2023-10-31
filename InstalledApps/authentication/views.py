@@ -7,17 +7,18 @@ from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from datetime import timedelta
-from InstalledApps.general.constants import Constants
 
 import requests
-import json 
+import json
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import Token, AccessToken, RefreshToken
+from InstalledApps.general.constants import Constants
 
 
 def signup(request):
     context = {
-        'form': UserCreationForm,
-        'formaction': '/signup/',
+        Constants.FORM: UserCreationForm,
+        Constants.FORM_ACTION: '/signup/',
     }
     if request.method == 'GET':
         return render(request, 'signup.html', context)
@@ -35,18 +36,18 @@ def signup(request):
                     return redirect(reverse('index'))
                 except IntegrityError:
                     context.update(
-                        {'errorform': {'errorset': 'Username already exists'}})
+                        {Constants.ERROR_FORM: {Constants.ERROR_SET: 'Username already exists'}})
                     return render(request, 'signup.html', context)
                 except ValueError:
-                    context.update({'errorform': {'errorset': 'Invalid data'}})
+                    context.update({Constants.ERROR_FORM: {Constants.ERROR_SET: 'Invalid data'}})
                     return render(request, 'signup.html', context)
             else:
-                context.update({'errorform': form.errors.items()})
+                context.update({Constants.ERROR_FORM: form.errors.items()})
                 return render(request, 'signup.html', context)
         else:
             context.update({
-                'formaction': '',
-                'errorform': {'errorset': 'Password do not match'}
+                Constants.FORM_ACTION: '',
+                Constants.ERROR_FORM: {Constants.ERROR_SET: 'Password do not match'}
             })
             return render(request, 'signup.html', context)
 
@@ -55,15 +56,15 @@ def signup(request):
 def signout(request):
     logout(request)
     return render(request, 'home.html', {
-        'title': 'Home',
-        'cardtitle': 'Home',
+        Constants.FORM_TITLE: 'Home',
+        Constants.FORM_CARD_TITLE: 'Home',
     })
 
 
 def signin(request):
     context = {
-        'form': AuthenticationForm,
-        'formaction': '/signin/'
+        Constants.FORM: AuthenticationForm,
+        Constants.FORM_ACTION: '/signin/'
     }
     if request.method == 'GET':
         return render(request, 'signin.html', context)
@@ -72,31 +73,34 @@ def signin(request):
                             username=request.POST['username'],
                             password=request.POST['password'])
         if user is None:
-            context.update({'errorform': {'errorset': 'Username or password is incorrect'}})
+            context.update({Constants.ERROR_FORM: {Constants.ERROR_SET: 'Username or password is incorrect'}})
             return render(request, 'signin.html', context)
         else:
             login(request, user)
             refresh = refresh_token(user, is_local=True)
-            request.session[Constants.ACCESS_TOKEN] = f'Bearer {refresh.access_token}'
+            request.session[Constants.ACCESS_TOKEN] = str(refresh.access_token)
+            request.session[Constants.REFRESH_TOKEN] = str(refresh)
             return redirect(reverse('index'))
+
 
 # tokens manager, external calls in development
 def access_token(user, is_local):
     token = None
     if is_local:
-    # using token de django
+        # using token de django
         token = AccessToken.for_user(user)
-        token.set_exp(lifetime=timedelta(hours=1))
+        # __DEVELOPMENT__
+        # token.set_exp(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'])
     # __DEVELOPMENT__
     else:
         data = {
-            'username': user.username, 
+            'username': user.username,
             'password': user.password,
-            }
+        }
 
         headers = {
-            'Content-Type': 'application/json'
-            }
+            Constants.FORM_CONTENT_TYPE: Constants.APLICATION_JSON
+        }
 
         url_rest = f'{settings.API_BASE_URL}/api/token/'
         response = requests.post(url_rest, json=data, headers=headers)
@@ -105,14 +109,17 @@ def access_token(user, is_local):
             token = response.json().get('access')
             return token
         else:
-            print(f"Error: {response.status_code} - {response.text}")
+            print(f'Error: {response.status_code} - {response.text}')
         return None
     return token
+
 
 def refresh_token(user, is_local):
     token = None
     if is_local:
-    # using token de django
+        # using token de django
         token = RefreshToken.for_user(user)
+        # __DEVELOPMENT__
+        # token.set_exp(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
     # __DEVELOPMENT__ else:
     return token

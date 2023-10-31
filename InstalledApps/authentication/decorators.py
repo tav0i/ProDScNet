@@ -8,7 +8,7 @@ def custom_authorization_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
         # Verifica la existencia del encabezado Authorization y el formato adecuado
         authorization_header = request.session.get(Constants.ACCESS_TOKEN)
-        if authorization_header and authorization_header.startswith('Bearer '):
+        if authorization_header and authorization_header.startswith('{Constants.AUTORIZATION_TYPE} '):
             access_token = authorization_header.split(' ')[1]
 
             # Realiza la validación del token si es necesario

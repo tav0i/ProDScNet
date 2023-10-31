@@ -6,7 +6,7 @@ from django.conf import settings
 from django.urls import reverse
 from .models import Book
 from .forms import BookForm
-
+from InstalledApps.general.constants import Constants
 # Create your views here.
 
 
@@ -21,13 +21,13 @@ def bookshop(request):
 @login_required
 def bookshop_create(request):
     context = {
-        'form': BookForm,
-        'formaction': '/bookshop/create/',
-        'formenctype': 'multipart/form-data',
-        'MEDIA_URL': settings.MEDIA_URL,
-        'title': 'Create book',
-        'cardtitle': 'Create book',
-        'cardsubtitle': 'Book',
+        Constants.FORM: BookForm,
+        Constants.FORM_ACTION: '/bookshop/create/',
+        Constants.FORM_ENCTYPE: 'multipart/form-data',
+        Constants.MEDIA_URL: settings.MEDIA_URL,
+        Constants.FORM_TITLE: 'Create book',
+        Constants.FORM_CARD_TITLE: 'Create book',
+        Constants.FORM_CARD_SUBTITLE: 'Book',
     }
     if request.method == 'GET':
         return render(request, 'bookshop_detail.html', context)
@@ -38,10 +38,10 @@ def bookshop_create(request):
                 form.save()
                 return redirect(reverse('bookshop'))
             except ValueError:
-                context.update({'errorform': {'errorset': 'Invalid data'}})
+                context.update({Constants.ERROR_FORM: {Constants.ERROR_SET: 'Invalid data'}})
                 return render(request, 'bookshop_detail.html', context)
         else:
-            context.update({'errorform': form.errors.items()})
+            context.update({Constants.ERROR_FORM: form.errors.items()})
             return render(request, 'bookshop_detail.html', context)
 
 
@@ -49,23 +49,23 @@ def bookshop_create(request):
 def bookshop_detail(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     context = {
-        'formaction': f"/bookshop/{book_id}/",
-        'formenctype': 'multipart/form-data',
-        'MEDIA_URL': settings.MEDIA_URL,
-        'title': 'Edit book',
-        'cardtitle': 'Edit book',
-        'cardsubtitle': 'Book',
+        Constants.FORM_ACTION: f"/bookshop/{book_id}/",
+        Constants.FORM_ENCTYPE: 'multipart/form-data',
+        Constants.MEDIA_URL: settings.MEDIA_URL,
+        Constants.FORM_TITLE: 'Edit book',
+        Constants.FORM_CARD_TITLE: 'Edit book',
+        Constants.FORM_CARD_SUBTITLE: 'Book',
     }
     if request.method == 'GET':
         form = BookForm(instance=book)
         context.update({
-            'form': form,
+            Constants.FORM: form,
             'book': book,
             }) 
         return render(request, 'bookshop_detail.html', context)
     elif request.method == 'POST':
         form = BookForm(request.POST, request.FILES or None, instance=book)
-        context.update({'form': form})
+        context.update({Constants.FORM: form})
         if form.is_valid():
             try:
                 form.save()
@@ -73,10 +73,10 @@ def bookshop_detail(request, book_id):
             except ValueError:
                 context.update({
                     'book': book,
-                    'errorform': {'errorset': 'Error updating book'}})
+                    Constants.ERROR_FORM: {Constants.ERROR_SET: 'Error updating book'}})
                 return render(request, 'bookshop_detail.html', context)
         else:
-            context.update({'errorform': form.errors.items()})
+            context.update({Constants.ERROR_FORM: form.errors.items()})
             return render(request, 'bookshop_detail.html', context)
 
 
@@ -89,5 +89,5 @@ def bookshop_delete(request, book_id):
             return redirect(reverse('bookshop'))
         except ValueError:
             return render(request, 'bookshop.html', {
-                'errorform': {'errorset': 'Error deleting book'}
+                Constants.ERROR_FORM: {Constants.ERROR_SET: 'Error deleting book'}
             })

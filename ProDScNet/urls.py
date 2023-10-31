@@ -17,18 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import RedirectView
-from ProDScNet import views
-from InstalledApps.authentication import views
-from InstalledApps.general import views
-from InstalledApps.bookshop import views
-from InstalledApps.tasks import views
+from . import views
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
-from . import views
 
 urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/img/favicon.png')),
@@ -39,8 +34,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
-    # Otras rutas protegidas por JWT
-    #path('api/secure-resource/', views.SecureResourceView.as_view(), name='secure_resource'),
+    # Others paths protected by JWT
+    # path('api/secure-resource/', views.SecureResourceView.as_view(), name='secure_resource'),
 
     path('', include('InstalledApps.authentication.urls')),
     path('', include('InstalledApps.general.urls')),
