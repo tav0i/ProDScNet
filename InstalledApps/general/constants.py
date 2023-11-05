@@ -8,6 +8,13 @@ class Constants:
     FORM_ACTION = 'formaction'
     ERROR_FORM = 'errorform'
     ERROR_SET = 'errorset'
+    ERROR_CUSTOM = 'controller exception: '
+    ERROR_MY_CUSTOM = 'SetMyErrorCustom'
+    ERROR_EXCEPTION = 'Exception: '
+    ERROR_NOT_MANAGED = 'not managed exception: '
+    ERROR_ITEMS = 'DataBase Exception: '
+    VALUE_ERROR = 'incorrected value: '
+    INTEGRITY_ERROR = 'integrity error: '
 
     FORM_CONTENT_TYPE = 'Content-Type'
     

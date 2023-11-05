@@ -25,6 +25,9 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
+from InstalledApps.general.views import Error404View, Error500View
+from django.conf.urls import handler404, handler500
+
 urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/img/favicon.png')),
     path('', views.home, name='home'),
@@ -43,3 +46,7 @@ urlpatterns = [
     path('', include('InstalledApps.bookshop.urls')),
     path('', include('InstalledApps.projects.urls')),
 ]
+
+handler404 = Error404View.as_view()
+
+handler500 = Error500View.as_error_view()

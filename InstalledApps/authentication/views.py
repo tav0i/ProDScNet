@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,6 +14,9 @@ import json
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import Token, AccessToken, RefreshToken
 from InstalledApps.general.constants import Constants
+from InstalledApps.general import utils
+
+from InstalledApps.general.exception_handlers import ExceptionHandler
 
 
 def signup(request):
@@ -20,13 +24,12 @@ def signup(request):
         Constants.FORM: UserCreationForm,
         Constants.FORM_ACTION: '/signup/',
     }
-    if request.method == 'GET':
-        return render(request, 'signup.html', context)
-    elif request.method == 'POST':
-        if request.POST['password1'] == request.POST['password2']:
-            form = UserCreationForm(request.POST)
-            if form.is_valid():
-                try:
+    messages = []
+    try:
+        if request.method == 'POST':
+            if request.POST['password1'] == request.POST['password2']:
+                form = UserCreationForm(request.POST)
+                if form.is_valid():
                     user = User.objects.create_user(
                         username=request.POST['username'],
                         password=request.POST['password1']
@@ -34,22 +37,31 @@ def signup(request):
                     user.save()
                     login(request, user)  # create a cookie with user info
                     return redirect(reverse('index'))
-                except IntegrityError:
-                    context.update(
-                        {Constants.ERROR_FORM: {Constants.ERROR_SET: 'Username already exists'}})
-                    return render(request, 'signup.html', context)
-                except ValueError:
-                    context.update({Constants.ERROR_FORM: {Constants.ERROR_SET: 'Invalid data'}})
-                    return render(request, 'signup.html', context)
+                else:
+                    context.update({
+                        Constants.ERROR_FORM: form.errors.items()
+                    })
+                    raise ValidationError(str(form.errors.items()))
             else:
-                context.update({Constants.ERROR_FORM: form.errors.items()})
-                return render(request, 'signup.html', context)
-        else:
-            context.update({
-                Constants.FORM_ACTION: '',
-                Constants.ERROR_FORM: {Constants.ERROR_SET: 'Password do not match'}
-            })
-            return render(request, 'signup.html', context)
+                messages.append('Password do not match')
+                context.update({
+                    Constants.ERROR_FORM: {Constants.ERROR_SET: messages}
+                })
+                raise ValueError(messages)
+    except ValidationError as e:
+        ExceptionHandler(e).handle()
+    except Exception as e:
+        context.update({
+            Constants.ERROR_FORM: {
+                Constants.ERROR_SET: f'{Constants.ERROR_EXCEPTION} {e}'}
+        })
+        ExceptionHandler(e).handle()
+    else:
+        print('executed if no not exist error')
+    # always executed
+    finally:
+        print('es el finally')
+        return render(request, 'signup.html', context)
 
 
 @login_required
@@ -73,7 +85,8 @@ def signin(request):
                             username=request.POST['username'],
                             password=request.POST['password'])
         if user is None:
-            context.update({Constants.ERROR_FORM: {Constants.ERROR_SET: 'Username or password is incorrect'}})
+            context.update({Constants.ERROR_FORM: {
+                           Constants.ERROR_SET: 'Username or password is incorrect'}})
             return render(request, 'signin.html', context)
         else:
             login(request, user)

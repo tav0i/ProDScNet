@@ -12,3 +12,6 @@ mykey.pem.pub
 **/static/
 **/staticfiles/
 **/media/
+
+#error.log
+error.log

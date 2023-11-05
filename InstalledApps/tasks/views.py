@@ -63,7 +63,7 @@ def tasks(request, is_not_completed):
             #   })
     except Exception as e:
         context.update({
-            Constants.ERROR_FORM: {Constants.ERROR_SET: e}
+            Constants.ERROR_FORM: {Constants.ERROR_SET: f'{Constants.ERROR_EXCEPTION} e'}
             })
     return render(request, 'tasks.html', context)
 
@@ -85,8 +85,10 @@ def task_create(request):
                 user_task.save()
                 return redirect(reverse('tasks', args=['True']))
             except ValueError:
-                context.update({Constants.ERROR_FORM: {Constants.ERROR_SET: 'Invalid data'}})
-                return render(request, 'task_create.html', context)
+                context.update({
+                    Constants.ERROR_FORM: {Constants.ERROR_SET: f'{Constants.VALUE_ERROR} Invalid data'}
+                    })
+                raise Constants.VALUE_ERROR
         else:
             context.update({Constants.ERROR_FORM: form.errors.items()})
             return render(request, 'task_create.html', context)
@@ -125,7 +127,7 @@ def task_detail(request, task_id):
             #     })
     except Exception as e:
         context.update({
-            Constants.ERROR_FORM: {Constants.ERROR_SET: e}
+            Constants.ERROR_FORM: {Constants.ERROR_SET: f'{Constants.ERROR_EXCEPTION} e'}
             })
     if request.method == 'GET':
         form = TaskForm(instance=task)
@@ -145,11 +147,15 @@ def task_detail(request, task_id):
             except ValueError:
                 context.update({
                     'task': task,
-                    Constants.ERROR_FORM: {Constants.ERROR_SET: 'Error updating task'}
+                    Constants.ERROR_FORM: {
+                        Constants.ERROR_SET: f'{Constants.VALUE_ERROR} Error updating book'}
                 })
-                return render(request, 'task_detail.html', context)
+                raise Constants.VALUE_ERROR
         else:
-            context.update({Constants.ERROR_FORM: form.errors.items()})
+            context.update({
+                Constants.ERROR_FORM: form.errors.items()
+                })
+            raise Constants.ERROR_CUSTOM
             return render(request, 'task_detail.html', context)
 
 
@@ -170,11 +176,14 @@ def task_complete(request, task_id):
             except ValueError:
                 context.update({
                     'task': task,
-                    Constants.ERROR_FORM: {Constants.ERROR_SET: 'Error completing task'}
+                    Constants.ERROR_FORM: {Constants.ERROR_SET: f'{Constants.VALUE_ERROR} Error completing book'},
                 })
-                return render(request, 'task.html', context)
+                raise Constants.VALUE_ERROR
         else:
-            context.update({Constants.ERROR_FORM: form.errors.items()})
+            context.update({
+                Constants.ERROR_FORM: form.errors.items()
+                })
+            raise Constants.ERROR_CUSTOM
             return render(request, 'task.html', context)
 
 
@@ -197,9 +206,9 @@ def task_delete(request, task_id):
             except ValueError:
                 context.update({
                     'task': task,
-                    Constants.ERROR_FORM: {Constants.ERROR_SET: 'Error deleting task'}
+                    Constants.ERROR_FORM: {Constants.ERROR_SET: f'{Constants.VALUE_ERROR} Error deleting task'},
                 })
-                return render(request, 'task.html', context)
+                raise Constants.VALUE_ERROR
         else:
             context.update({Constants.ERROR_FORM: form.errors.items()})
             return render(request, 'task.html', context)

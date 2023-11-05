@@ -38,8 +38,10 @@ def bookshop_create(request):
                 form.save()
                 return redirect(reverse('bookshop'))
             except ValueError:
-                context.update({Constants.ERROR_FORM: {Constants.ERROR_SET: 'Invalid data'}})
-                return render(request, 'bookshop_detail.html', context)
+                context.update({
+                    Constants.ERROR_FORM: {Constants.ERROR_SET: f'{Constants.INTEGRITY_ERROR} Invalid data'}
+                    })
+                raise {Constants.INTEGRITY_ERROR}
         else:
             context.update({Constants.ERROR_FORM: form.errors.items()})
             return render(request, 'bookshop_detail.html', context)
@@ -73,8 +75,10 @@ def bookshop_detail(request, book_id):
             except ValueError:
                 context.update({
                     'book': book,
-                    Constants.ERROR_FORM: {Constants.ERROR_SET: 'Error updating book'}})
-                return render(request, 'bookshop_detail.html', context)
+                    Constants.ERROR_FORM: {
+                        Constants.ERROR_SET: f'{Constants.VALUE_ERROR} Error updating book'}
+                        })
+                raise {Constants.VALUE_ERROR}
         else:
             context.update({Constants.ERROR_FORM: form.errors.items()})
             return render(request, 'bookshop_detail.html', context)
@@ -88,6 +92,10 @@ def bookshop_delete(request, book_id):
             book.delete()
             return redirect(reverse('bookshop'))
         except ValueError:
+            context = {
+                Constants.ERROR_FORM: {Constants.ERROR_SET: f'{Constants.VALUE_ERROR} Error deleting book'}
+                }
+            raise Constants.VALUE_ERROR
             return render(request, 'bookshop.html', {
                 Constants.ERROR_FORM: {Constants.ERROR_SET: 'Error deleting book'}
             })
