@@ -6,10 +6,11 @@ class ExceptionLoggingMiddleware:
 
     def __call__(self, request):
         try:
-            print(f'Call to ExceptionLoggingMiddleware {request}')
+            print(f'Request LoggingMiddleware {request}')
             response = self.get_response(request)
+            print(f'Response LoggingMiddleware {response}')
         except Exception as e:
-            print('Exception in ExceptionLoggingMiddleware {request}')
+            print(f'ERROR in ExceptionLoggingMiddleware {request} - {e}')
             # __DEVELOPMENT__: Could redirect to a personalized page
             handle_log_exception(request, e)  
             response = self.get_response(request) 

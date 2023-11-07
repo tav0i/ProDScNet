@@ -12,6 +12,6 @@ class Task(models.Model):
     is_important = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    @property
+    # @property TypeError: 'str' object is not callable
     def __str__(self):
         return self.title + ' - by ' + self.user.username

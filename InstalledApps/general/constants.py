@@ -13,6 +13,7 @@ class Constants:
     ERROR_EXCEPTION = 'Exception: '
     ERROR_NOT_MANAGED = 'not managed exception: '
     ERROR_ITEMS = 'DataBase Exception: '
+    ERROR_HTTP_REST = 'Rest call error: '
     VALUE_ERROR = 'incorrected value: '
     INTEGRITY_ERROR = 'integrity error: '
 

@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.core.mail import send_mail
 from InstalledApps.general.logs import handle_log_exception
+from requests.exceptions import HTTPError
+
 '''
 exception_handlers = {
     "ValueError": lambda e: print("Produce error ValueError:", e),
@@ -35,8 +37,11 @@ class ExceptionHandler:
                 IntegrityError,
                 )):
                 print(f'HDL ingresa a errores no controlados: {self.exception}')
+            elif isinstance(self.exception, HTTPError):
+                print(f'HDL ingresa a HTTP error: {self.exception}')
             elif isinstance(self.exception, Exception):
                 print(f'HDL ingresa a error general: {self.exception}')
+            
         except Exception as e:
             print(f'HDL have error {e}')
         finally:

@@ -13,6 +13,8 @@ curl http://localhost:8000
 #phpMyAdmin connect
 ssh -N -L 8888:127.0.0.1:80 -i mykey.pem tav0i@34.147.90.31
 con el >> mariadb --help --verbose se pone bind-address=0.0.0.0 #acepta conecciones remotas
+se lo visita a través de la url: http://127.0.0.1:8888/
+la clave de mi mykey.pem es Win6427Univ
 
 #create superuser in django project
 python manage.py createsuperuser
