@@ -6,8 +6,8 @@ from .apis import TaskViewSet
 from rest_framework import routers
 
 urlpatterns = [
-    # path('api/tasks/<str:is_not_completed>/', apis.TaskList.as_view(), name='api_tasks'),
-    # path('api/task/<int:task_id>/', apis.TaskDetail.as_view(), name='api_task_detail'),
+    path('api/tasks/<str:is_not_completed>/', apis.TaskViewList.as_view(), name='api_tasks'),
+    path('api/task/<int:task_id>/', apis.TaskViewDetail.as_view(), name='api_task_detail'),
     # path('api/task/create/', apis.TaskCreate.as_view(), name='api_task_create'),
 
     path('tasks/<str:is_not_completed>/', views.tasks, name='tasks'),

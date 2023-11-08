@@ -4,20 +4,6 @@ from django.core.mail import send_mail
 from InstalledApps.general.logs import handle_log_exception
 from requests.exceptions import HTTPError
 
-'''
-exception_handlers = {
-    "ValueError": lambda e: print("Produce error ValueError:", e),
-    "TypeError": lambda e: print("Produce TypeError:", e),
-    "IndexError": lambda e: print("Produce IndexError:", e),
-    "NameError": lambda e: print("Produce NameError:", e),
-    "KeyError": lambda e: print("Produce KeyError:", e),
-    "ImportError": lambda e: print("Produce ImportError:", e),
-    "IntegrityError": lambda e: print("Produce IntegrityError:", e),
-    "Exception": lambda e: print(f"Produce not handler error: {e}"),
-}
-'''
-
-
 class ExceptionHandler:
     def __init__(self, exception):
         self.exception = exception
