@@ -15,20 +15,22 @@ Task admin
         Update
     </button>
     <div class="mt-5 d-flex">
-        {% if task.date_completed == None %}
-        <a class="my_href" href="{% url 'task_complete' task.id %}" role="button">
-            <button class="btn btn-secondary">
-                Complete
-            </button>
-        </a>
-        |
+        {% if task.date_completed is not null %}
+            {% if task.date_completed == None %}
+            <a class="my_href" href="{% url 'task_complete' task.id %}" role="button">
+                <button class="btn btn-secondary">
+                    Complete
+                </button>
+            </a>
+            |
+            {% endif %}
+            <a class="my_href" href="{% url 'task_delete' task.id %}" role="button">
+                <button class="btn btn-danger">
+                    Delete
+                </button>
+            </a>
+            |
         {% endif %}
-        <a class="my_href" href="{% url 'task_delete' task.id %}" role="button">
-            <button class="btn btn-danger">
-                Delete
-            </button>
-        </a>
-        |
         {% if task.date_completed == None %}
         <a name="" id="" class="btn btn-primary" href="{% url 'tasks' True %}" role="button">Cancel Pending</a>
         {% else %}

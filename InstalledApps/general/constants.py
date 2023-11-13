@@ -20,6 +20,7 @@ class Constants:
     MEDIA_URL = 'MEDIA_URL'
     FORM_ENCTYPE = 'formenctype'
     FORM_ACTION = 'formaction'
+    FORM_ELSE = 'executed if not exists exception'
     ERROR_FORM = 'errorform'
     ERROR_SET = 'errorset'
     ERROR_CUSTOM = 'controller exception: '
@@ -27,8 +28,7 @@ class Constants:
     ERROR_EXCEPTION = 'Exception: '
     ERROR_NOT_MANAGED = 'not managed exception: '
     ERROR_ITEMS = 'DataBase Exception: '
-    ERROR_HTTP_REST = 'Rest call error: '
-    VALUE_ERROR = 'incorrected value: '
+    VALUE_ERROR = 'uncorrected value: '
     INTEGRITY_ERROR = 'integrity error: '
 
     FORM_CONTENT_TYPE = 'Content-Type'
@@ -55,15 +55,28 @@ class Constants:
     TOKEN = 'token'
     REFRESH_TOKEN = 'refresh_token'
     ERROR_API = 'error'
+    ERROR_HTTP_REST = 'Rest call error'
+    ERROR_REQUEST_EXCEPTION = 'request exception'
+    ERROR_CONNECTION = 'connection error'
+    ERROR_TIMEOUT = 'timeout connection'
     MESSAGE_API = 'message'
 
     #user
     USER_REGISTERED = 'User registered successfully'
 
     #tasks
+    TASK_COMPLETED = 'Completed Task'
+    TASK_PENDING = 'Pending Task'
     ERROR_NOT_FOUND = 'Not found'
+    ERROR_NOT_CONTROLLED = 'Not yet controlled exception'
     ERROR_PARSE = 'Not available option'
-    ERROR_VALIDATION = 'Request Invalid'
-    ERROR_PERMISION_DENIED = 'Not permited action'
+    ERROR_VALIDATION = 'Validation error or Request Invalid'
+    ERROR_VALUE = 'Value error exception'
+    ERROR_PERMISION_DENIED = 'Not permitted action'
     ERROR_INVALID_CREDENTIALS = 'Invalid credentials'
     ERROR_TASK_NOT_FOUND = 'Task not found'
+
+    # __DEPRECATED__
+    # __DEVELOPMENT__
+    # __IMPORTANT__
+    # __TEST__

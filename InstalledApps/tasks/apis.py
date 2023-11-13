@@ -32,14 +32,15 @@ class TaskViewList(generics.RetrieveAPIView):
             if not group.exists():
                 raise PermissionDenied(Constants.ERROR_PERMISION_DENIED)
             # Get the query variables
-            is_not_completed = self.kwargs.get('is_not_completed')
-            if is_not_completed == 'False':
+            is_not_completed = self.kwargs.get('is_not_completed').lower()
+            if is_not_completed == 'false':
                 is_not_completed = False
-            elif is_not_completed == 'True':
+            elif is_not_completed == 'true':
                 is_not_completed = True
             else:
                 raise ValidationError(Constants.ERROR_VALIDATION)
 
+            # __IMPORTANT__
             # Task.objects.select_related: ForeignKey o OneToOneField
             # Task.objects.prefetch_related ManyToManyField o Reverse ForeignKey
             # or in this case put UserSerializer inside TaskSerializer on serializer.py
@@ -77,7 +78,6 @@ class TaskViewDetail(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         try:
-            # Ethe user has come from authentication token
             user = request.user
             group = Group.objects.filter(user=user, name=Constants.ALLOW_VIEWER)
             if not group.exists():

@@ -7,16 +7,20 @@ from django.conf import settings
 from django.urls import reverse
 from requests.exceptions import HTTPError
 from .forms import Task, TaskForm
-from .serializers import TaskSerializer #, TaskDecoder
+from .serializers import TaskSerializer  # , TaskDecoder
 
 import json
 import requests
+from requests.exceptions import ConnectionError, Timeout, RequestException, HTTPError
+
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework import status
 
 from InstalledApps.general.constants import Constants
+from InstalledApps.general.exception_handlers import ExceptionHandler
 
 
 # REST tasks
@@ -26,34 +30,33 @@ def tasks(request, is_not_completed):
     context = {}
     messages = []
     try:
-        if is_not_completed == 'False':
+        if is_not_completed.lower() == 'false':
             is_not_completed = False
             context.update({
-                Constants.FORM_TITLE: 'Completed Task',
-                Constants.FORM_ACTION: '/task/False'
+                Constants.FORM_TITLE: Constants.TASK_COMPLETED,
+                Constants.FORM_ACTION: '/task/false'
             })
-        elif is_not_completed == 'True':
+        elif is_not_completed.lower() == 'true':
             is_not_completed = True
             context.update({
-                Constants.FORM_TITLE: 'Pending Task',
-                Constants.FORM_ACTION: '/task/True'
+                Constants.FORM_TITLE: Constants.TASK_PENDING,
+                Constants.FORM_ACTION: '/task/true'
             })
-        else:
-            messages.append('Option not available, default Pending task')
-            is_not_completed = True
-            context.update({
-                Constants.FORM_TITLE: 'Pending Task',
-                Constants.FORM_ACTION: '/task/True',
-                Constants.ERROR_FORM: {Constants.ERROR_SET: messages}
-            })
-            raise Exception(messages)
+        # region __TEST__ call to de Models directly
+        '''
         tasks = Task.objects.filter(
             user=request.user,
             date_completed__isnull=is_not_completed).order_by('date_completed')
         context.update({
             'tasks': tasks,
         })
-        # call to REST
+        tasks_serializer = TaskSerializer(
+            instance=tasks, many=True
+        )
+        print(f'SERIALIZADO_DIRECTO:  {tasks_serializer.data}')
+        '''
+        # endregion __TEST__
+        # region REST
         rest_url = f'{settings.API_BASE_URL}api/tasks/{is_not_completed}/'
         access_token = str(request.session.get(Constants.ACCESS_TOKEN))
         headers = {
@@ -61,50 +64,36 @@ def tasks(request, is_not_completed):
         }
         data = {}
         response = requests.get(rest_url, headers=headers, data=data)
-        print(f'Status code: " {response.status_code}')
-        if response.status_code == 200:
-            task_rest_data = response.json()
-            # Crear una lista de instancias de Task
-            task_instances = [Task(**data) for data in task_rest_data]
-            # Pasar la lista de instancias al serializador
-            tasks_serializer = TaskSerializer(
-                instance=task_instances, many=True)
-            print(f'EN TASK_SERIALIZER {tasks_serializer}')
-            # Deserializar la respuesta a una lista de Task
-            # print(response.json)
-            # task_list = json.loads(response.content, cls=TaskDecoder)
-            # print(f'REST json : {task_list}')
-            # print(task.id)
-            # print(task.title)
-            # print(task.user.username)
-            # print(task.user.email)
-
-            # print(f'REST: {task_rest_data}')
-            # print(f'SERIALIZADOS: {tasks_serializer}')
-            if tasks_serializer.is_valid():
-                print(f'Task serializer valido')
-            else:
-                print(f'Task serializer invalid')
-                # raise HTTPError('task serializer invalid')
-            #    print(f'messsages: {tasks_serializer.error_messages}')
-            #   context.update({
-            #       Constants.ERROR_FORM: tasks_serializer.error_messages
-            #   })
+        if response.status_code == status.HTTP_200_OK:
+            tasks_api_response = response.json()
+            tasks_api_data = response.json()
+            context.update({
+                'tasks': tasks_api_response,
+            })
+            # region __TEST__
+            '''
+            tasks_api_serializer = TaskSerializer(
+                instance=tasks_api_response, many=True) # __IMPORTANT__ data instead intance is for validat and create an object
+            print(f'SERIALIZED_REST {tasks_api_serializer.data}')
+            '''
+            # endregion __TEST__
         else:
-            print(f'task serializer fail {response.status_code}')
-            # raise HTTPError(f'task serializer invalid {response.status_code}')
-    except HTTPError as e:
+            response.raise_for_status()  # Raise a exception for HTTP error
+        # endregion REST
+    except (ConnectionError, Timeout, RequestException, HTTPError) as e:
+        # task_api_response.error_messages
         context.update({
             Constants.ERROR_FORM: {
-                Constants.ERROR_SET: f'{Constants.ERROR_HTTP_REST} {e}'}
+                Constants.ERROR_SET: f'{Constants.ERROR_API} {e}'}
         })
+        ExceptionHandler(e).handle()
     except Exception as e:
         context.update({
             Constants.ERROR_FORM: {
                 Constants.ERROR_SET: f'{Constants.ERROR_EXCEPTION} {e}'}
         })
     else:
-        print('executed if no not exist error')
+        print(Constants.FORM_ELSE)
     finally:
         return render(request, 'tasks.html', context)
 
@@ -124,7 +113,7 @@ def task_create(request):
                 user_task = form.save(commit=False)
                 user_task.user = request.user
                 user_task.save()
-                return redirect(reverse('tasks', args=['True']))
+                return redirect(reverse('tasks', args=['true']))
             except ValueError:
                 context.update({
                     Constants.ERROR_FORM: {
@@ -144,82 +133,61 @@ def task_detail(request, task_id):
     }
     messages = []
     try:
-        # __IMPORTANT__ call to de Models directly
+        # region __TEST__ call to de Models directly
+        '''
         task = get_object_or_404(
             Task,
             pk=task_id,
             user=request.user
         )
-        if request.method == 'GET':
-            form = TaskForm(instance=task)
+        context.update({
+            'task': task,
+        })
+        task_serializer = TaskSerializer(
+            instance=task, many=False
+        )
+        print(f'SERIALIZADO_DIRECTO:  {task_serializer.data}')
+        '''
+        # endregion __TEST__
+        # region REST
+        rest_url = f'{settings.API_BASE_URL}api/task/{task_id}/'
+        access_token = str(request.session.get(Constants.ACCESS_TOKEN))
+        headers = {
+            Constants.AUTHORIZATION: f'{Constants.AUTORIZATION_TYPE} {access_token}'
+        }
+        data = {}
+        response = requests.get(rest_url, headers=headers, data=data)
+        if response.status_code == status.HTTP_200_OK:
+            task_api_response = response.json()
+            context.update({
+                'task': task_api_response,
+            })
+            # region __TEST__
+            '''
+            task_api_serializer = TaskSerializer(
+                instance=task_api_response, many=False # __IMPORTANT__ data instead intance is for validat and create an object
+            )
+            print(f'SERIALIZED_REST:  {task_api_serializer.data}')
+            '''
+            # endregion __TEST__
+            form = TaskForm(data=task_api_response)
             context.update({
                 Constants.FORM: form,
             })
-            context.update({
-                'task': task,
-            })
-            ###
-            task_serializer = TaskSerializer(
-                instance=task, many=False
-            )
-            print(f'SERIALIZADO DIRECTO:  {task_serializer.data}')
-            ###
-
-            rest_url = f'{settings.API_BASE_URL}api/task/{task_id}/'
-            access_token = str(request.session.get(Constants.ACCESS_TOKEN))
-            headers = {
-                Constants.AUTHORIZATION: f'{Constants.AUTORIZATION_TYPE} {access_token}'
+        else:
+            context = {
+                Constants.FORM: TaskForm,
             }
-            data = {}
-            response = requests.get(rest_url, headers=headers, data=data)
-            if response.status_code == 200:
-                task_rest_data = response.json()
-                print(f'TASK_REST_DATA_RESPONSE {task_rest_data}')
-
-                # data_json = '{"id":1,"title":"tarea de deploy hacia google cloud","description":"tarea de deploy hacia google cloud desde git","is_important":true,"date_completed":null,"user": {"id":1,"username":"tav0i","email":"tav0i@outlook.com"}}'
-                # print(f'DATA_JSON {data_json}')
-
-                tasks_serializer = TaskSerializer(
-                    data=task_rest_data, many=False
-                )
-                if tasks_serializer.is_valid():
-
-                    # Convert the serialized data to JSON
-                    renderer = JSONRenderer()
-                    task_rest = renderer.render(tasks_serializer.data)
-                    print(
-                        f'EN TASK_REST_DATA {task_rest} - {tasks_serializer.is_valid()}'
-                    )
-                    # Decode the JSON data into a Task object
-                    # task_object = json.loads(task_rest, cls=TaskDecoder)
-                    # print("JSON_LOAD:", task_object)
-
-                    context.update({
-                        'task': task,
-                    })
-                    print(f"DESERIALIZATION SUCESS!!!")
-                else:
-                    print("Errors during deserialization:",
-                          task_serializer.errors)
-                    # raise HTTPError('task serializer invalid')
-                #    print(f'messsages: {tasks_serializer.error_messages}')
-                #   context.update({
-                #       Constants.ERROR_FORM: tasks_serializer.error_messages
-                #   })
-
-                # context.update({
-                #     'task': tasks_serializer,
-                # })
-                # print(f'EN TASK_SERIALIZER {tasks_serializer}')
-
-            else:
-                print(f'task serializer fail {response.status_code}')
-                # raise HTTPError(f'task serializer invalid {response.status_code}')
-    except HTTPError as e:
+            response.raise_for_status()  # Raise a exception for HTTP error
+        # endregion REST
+    except (ConnectionError, Timeout, RequestException, HTTPError) as e:
+        # task_api_response.error_messages
+        print(f'Exception INSIDE DETAIL  {e}')
         context.update({
             Constants.ERROR_FORM: {
-                Constants.ERROR_SET: f'{Constants.ERROR_HTTP_REST} {e}'}
+                Constants.ERROR_SET: f'{Constants.ERROR_API} {e}'}
         })
+        # ExceptionHandler(e).handle()
     except Exception as e:
         print(f'Exception {e}')
         context.update({
@@ -227,7 +195,7 @@ def task_detail(request, task_id):
                 Constants.ERROR_SET: f'{Constants.ERROR_EXCEPTION} {e}'}
         })
     else:
-        print('se ejecuta si no hay excepcion')
+        print(Constants.FORM_ELSE)
     finally:
         return render(request, 'task_detail.html', context)
     '''
@@ -296,9 +264,9 @@ def task_delete(request, task_id):
             try:
                 task.delete()
                 if task.date_completed == None:
-                    return redirect(reverse('tasks', args=['True']))
+                    return redirect(reverse('tasks', args=['true']))
                 else:
-                    return redirect(reverse('tasks', args=['False']))
+                    return redirect(reverse('tasks', args=['false']))
             except ValueError:
                 context.update({
                     'task': task,

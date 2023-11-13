@@ -48,7 +48,7 @@ def signup(request):
                     Constants.ERROR_FORM: {Constants.ERROR_SET: messages}
                 })
                 raise ValueError(messages)
-    except ValidationError as e:
+    except (ValidationError, ValueError) as e:
         ExceptionHandler(e).handle()
     except Exception as e:
         context.update({
@@ -57,10 +57,8 @@ def signup(request):
         })
         ExceptionHandler(e).handle()
     else:
-        print('executed if no not exist error')
-    # always executed
+        print(Constants.FORM_ELSE)
     finally:
-        print('es el finally')
         return render(request, 'signup.html', context)
 
 
